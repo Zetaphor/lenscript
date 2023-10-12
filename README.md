@@ -88,8 +88,8 @@ The above script line will transition from the current state to a state named "p
 #### Interface Properties
 
 * `visible` - Boolean
-* `position` - { x, y, z }
-* `rotation` - { x, y, z, w }
-* `color` - { r, g, b }
-* `scale` - { x, y, z }
+* `position` - `{ x, y, z }`
+* `rotation` - `{ x, y, z, w }`
+* `color` - `{ r, g, b }`
+* `scale` - `{ x, y, z }`
 * `opacity` - Float
