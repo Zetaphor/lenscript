@@ -34,3 +34,34 @@ Lenscript operates on a scene graph made up of state-managed objects. Each of th
 
 The primary objective is to isolate the internal behavior of Lenscript from the specifics of the environment it operates in. This ensures that Lenscript scripts work the same way internally, regardless of the external host engine. Any differences arise solely due to how the host engine interacts with Lenscript's property mutations.
 
+### Syntax
+
+### Overview
+
+An object can contain multiple script lines. A script is a single line that takes the format of **When** _Trigger_ **Then** _Action_.
+
+As an example:
+
+> When touched then play success
+
+This script line will trigger when the interface detects the object has been touched, and will respond by instructing the interface to play the "success" sound effect.
+
+#### Multiple actions
+
+Commands can also support multiple actions in response to a single trigger by separating each action with a comma, for example:
+
+> When touched then play success, destroy
+
+This script line is identical to the above line, except it will also destroy the object after triggering the sound effect.
+
+#### Paramters
+
+Triggers and actions are able to accept one or more parameters. These are defined by providing the data immediately after the invoking keyword:
+
+##### Trigger Parameters
+
+> When touched then play success 50% volume
+
+##### Action Parameters
+
+> When touched then emit bubbles
