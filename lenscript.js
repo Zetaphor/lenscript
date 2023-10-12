@@ -7,13 +7,12 @@ export class lenscriptObjectProperties {
 }
 
 export class lenscriptObject {
-  constructor(name, properties = {}) {
+  #variables = {};
+  #currentState = 'default';
+  #states = { 'default': new lenscriptObjectProperties(properties) };
+
+  constructor(name) {
     this.name = name;
-    this.variables = {};
-    this.currentState = 'default';
-    this.states = {
-      'default': new lenscriptObjectProperties(properties)
-    };
   }
 
   /**
@@ -22,6 +21,34 @@ export class lenscriptObject {
    */
   setName(name) {
     this.name = name;
+  }
+
+  /**
+   * Get or set a variable value. If no value is provided the value of the variable is returned. Returns an empty string if the variable is undefined.
+   * @param {string} name
+   * @param {string} value optional value, if not provided the value of the variable is returned
+   */
+  var(name, value = null) {
+    if (value === null) return this.#variables[name] || '';
+    else this.#variables[name] = value.toString();
+  }
+
+  /**
+   * Get or set a state property value. If no value is provided the value of the property is returned. Returns an empty string if the property is undefined.
+   * @param {string} name
+   * @param {string} value optional value, if not provided the value of the property is returned
+   */
+  prop(name, value = null) {
+    if (value === null) return this.#states[this.currentState][name] || '';
+    else this.setProperty(name, value.toString());
+  }
+
+  /**
+   * Get the current state
+   * @returns {object} the current state
+   */
+  state() {
+    return this.#states[this.currentState];
   }
 
   /**
@@ -38,7 +65,7 @@ export class lenscriptObject {
    * @param {lenscriptObjectProperties} properties
    */
   addState(name, properties = {}) {
-    this.states[name] = new lenscriptObjectProperties(properties);
+    this.#states[name] = new lenscriptObjectProperties(properties);
   }
 
   /**
@@ -46,50 +73,16 @@ export class lenscriptObject {
    * @param {string} name
    */
   removeState(name) {
-    delete this.states[name];
-  }
-
-  /**
-   * Set a variable value
-   * @param {string} name
-   * @param {string} value
-   */
-  setVariable(name, value) {
-    this.variables[name] = value.toString();
-  }
-
-  /**
-   * Get a variable value
-   * @param {string} name
-   * @returns string the value of the variable
-   */
-  getVariable(name) {
-    return this.variables[name];
-  }
-
-  /**
-   * Set a property value
-   * @param {string} name
-   * @param {string} value
-   */
-  setProperty(name, value) {
-    this.states[this.currentState][name] = value.toString();
-  }
-
-  /**
-   * Get a property value
-   * @param {string} name
-   * @returns string the value of the property
-   */
-  getProperty(name) {
-    return this.states[this.currentState][name];
+    delete this.#states[name];
   }
 }
 
 export class lenscriptScene {
+  #variables = {};
+  #objects = {};
+
   constructor(objects = []) {
-    this.objects = objects;
-    this.variables = {};
+    this.#objects = objects;
   }
 
   /**
@@ -98,7 +91,7 @@ export class lenscriptScene {
    * @param {lenscriptObjectProperties} properties
    */
   addObject(name, properties = {}) {
-    this.objects.push(new lenscriptObject(name, properties));
+    this.#objects.push(new lenscriptObject(name, properties));
   }
 
   /**
@@ -106,16 +99,34 @@ export class lenscriptScene {
    * @param {string} name
   */
   removeObject(name) {
-    delete this.objects[name];
+    delete this.#objects[name];
   }
 
   /**
-   * Set a scene variable value
+   * Get or set a variable value. If no value is provided the value of the variable is returned. Returns an empty string if the variable is undefined.
    * @param {string} name
-   * @param {string} value
+   * @param {string} value optional value, if not provided the value of the variable is returned
    */
-  setVariable(name, value) {
-    this.variables[name] = value;
+  var(name, value = null) {
+    if (value === null) return this.#variables[name] || '';
+    else this.#variables[name] = value.toString();
+  }
+
+  /**
+   * Get an object from the scene
+   * @param {string} name
+   * @returns {lenscriptObject}
+   */
+  obj(name, value = null) {
+    if (value === null) return this.#objects[name] || '';
+  }
+
+  /**
+   * Get all of the objects in the scene
+   * @returns {Array<lenscriptObject>}
+   */
+  objects() {
+    return this.#objects;
   }
 }
 
