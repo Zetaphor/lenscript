@@ -39,7 +39,7 @@ export class lenscriptObject {
    * @param {string} value optional value, if not provided the value of the property is returned
    */
   prop(name, value = null) {
-    if (value === null) return this.#states[this.currentState][name] || '';
+    if (value === null) return this.#states[this.#currentState][name] || '';
     else this.setProperty(name, value.toString());
   }
 
@@ -48,7 +48,7 @@ export class lenscriptObject {
    * @returns {object} the current state
    */
   state() {
-    return this.#states[this.currentState];
+    return this.#states[this.#currentState];
   }
 
   /**
@@ -56,7 +56,7 @@ export class lenscriptObject {
    * @param {string} name
    */
   setState(name) {
-    this.currentState = name;
+    this.#currentState = name;
   }
 
   /**
