@@ -71,3 +71,9 @@ Triggers and actions are able to accept one or more parameters. These are define
 Object properties are stored in their current state. Transitioning to another state will overwrite these properties with new or default values, facilitating easy animations and transitions.
 
 Example: For a color-changing button, define each color in a separate state. Transition between states in response to a touch trigger.
+
+State transitions are done using the "become" keyword, ex:
+
+> When touched become pressed
+
+The above script line will transition from the current state to a state named "pressed".
