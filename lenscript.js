@@ -17,6 +17,7 @@ export class lenscriptObject {
 
   /**
    * Set the objects name
+   *
    * @param {string} name
    */
   setName(name) {
@@ -24,7 +25,9 @@ export class lenscriptObject {
   }
 
   /**
-   * Get or set a variable value. If no value is provided the value of the variable is returned. Returns an empty string if the variable is undefined.
+   * Get or set a variable value. If no value is provided the value of the variable is returned
+   * Returns an empty string if the variable is undefined
+   *
    * @param {string} name
    * @param {string} value optional value, if not provided the value of the variable is returned
    */
@@ -34,7 +37,9 @@ export class lenscriptObject {
   }
 
   /**
-   * Get or set a state property value. If no value is provided the value of the property is returned. Returns an empty string if the property is undefined.
+   * Get or set a state property value. If no value is provided the value of the property is returned
+   * Returns an empty string if the property is undefined
+   *
    * @param {string} name
    * @param {string} value optional value, if not provided the value of the property is returned
    */
@@ -45,6 +50,7 @@ export class lenscriptObject {
 
   /**
    * Get the current state
+   *
    * @returns {object} the current state
    */
   state() {
@@ -53,6 +59,7 @@ export class lenscriptObject {
 
   /**
    * Set the current state
+   *
    * @param {string} name
    */
   setState(name) {
@@ -60,7 +67,8 @@ export class lenscriptObject {
   }
 
   /**
-   * Add a state
+   * Add a state to the object
+   *
    * @param {string} name
    * @param {lenscriptObjectProperties} properties
    */
@@ -87,10 +95,11 @@ export class lenscriptScene {
 
   /**
    * Add an object to the scene
+   *
    * @param {string} name
    * @param {lenscriptObjectProperties} properties
    */
-  addObject(name, properties = {}) {
+  add(name, properties = {}) {
     this.#objects.push(new lenscriptObject(name, properties));
   }
 
@@ -98,12 +107,14 @@ export class lenscriptScene {
    * Remove an object from the scene
    * @param {string} name
   */
-  removeObject(name) {
+  remove(name) {
     delete this.#objects[name];
   }
 
   /**
-   * Get or set a variable value. If no value is provided the value of the variable is returned. Returns an empty string if the variable is undefined.
+   * Get or set a variable value. If no value is provided the value of the variable is returned
+   * Returns an empty string if the variable is undefined
+   *
    * @param {string} name
    * @param {string} value optional value, if not provided the value of the variable is returned
    */
@@ -114,6 +125,7 @@ export class lenscriptScene {
 
   /**
    * Get an object from the scene
+   *
    * @param {string} name
    * @returns {lenscriptObject}
    */
@@ -131,10 +143,10 @@ export class lenscriptScene {
 }
 
 /**
- * Parse a single command into its components.
+ * Parse a single command into its components
  *
- * @param {string} command - The command string to parse.
- * @returns {object} - An object containing the components of the command.
+ * @param {string} command The command string to parse
+ * @returns {object} An object containing the components of the command
  */
 export function parseCommand(command) {
   const result = {
@@ -166,10 +178,10 @@ export function parseCommand(command) {
 }
 
 /**
- * Parse multiple commands into a structured format.
+ * Parse multiple commands into a structured format
  *
- * @param {Array<string>} commands - An array of command strings.
- * @returns {Array<object>} - An array of parsed commands.
+ * @param {Array<string>} commands An array of command strings
+ * @returns {Array<object>} An array of parsed commands
  */
 export function parseCommands(commands) {
   return commands.map(command => parseCommand(command));
