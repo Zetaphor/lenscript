@@ -1,4 +1,3 @@
-import * as shaken from './triggers/shaken.js';
 import * as touched from './triggers/touched.js';
 
 const triggerRegistry = {

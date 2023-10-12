@@ -2,15 +2,9 @@ import { parseCommands } from './parser.js';
 import { executeCommand } from './commandRegistry.js';
 import { isTriggerValid } from './triggerRegistry.js';
 
-const testCommands = [
-  "When shaken then play doorbell",
-  "When touched then play doorbell with high-pitch 120% volume",
-  "When shaken then play laughter, emit bubbles",
-  "When starts then become next in 1s",
-  "When starts then become 3 in 1s",
-  "When touches red key 1 then tell open",
-  "When walked into then send one nearby to buildtown"
-];
+
+
+
 
 // Parse the commands
 const parsedCommands = parseCommands(testCommands);
