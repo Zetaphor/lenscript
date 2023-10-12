@@ -12,10 +12,11 @@ Anyland was developed by Philipp Lenssen so the name is an homage to him for the
 
 ### Architecture Overview
 
-Lenscript operates on a scene graph made up of state-managed objects. Each of these objects has named multiple states, which are collections of different types of properties: interface properties, trigger properties, and user-defined variables.
+Lenscript operates on a scene graph made up of state-managed objects. Each of these objects has named multiple states, which are collections of different types of properties: interface properties, trigger properties, and user-defined variables. The scene graph can also store user-defined variables which can be read by all objects.
 
 **Hierarchy:**
   - LenscriptScene
+    - User-defined variables
     - LenscriptObject
       - User-defined variables
       - States
