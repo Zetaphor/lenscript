@@ -77,3 +77,19 @@ State transitions are done using the "become" keyword, ex:
 > When touched become pressed
 
 The above script line will transition from the current state to a state named "pressed".
+
+### Defined Properties
+
+#### Trigger Properties
+
+* `touching` - True when the object is actively being touched
+* `hovering` - True when the object is actively being hovered by a selection pointer
+
+#### Interface Properties
+
+* `visible` - Boolean
+* `position` - { x, y, z }
+* `rotation` - { x, y, z, w }
+* `color` - { r, g, b }
+* `scale` - { x, y, z }
+* `opacity` - Float

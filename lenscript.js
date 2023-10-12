@@ -1,7 +1,18 @@
 export class lenscriptObjectProperties {
   constructor(properties = {}) {
+    // Trigger properties
     this.touching = false;
     this.hovering = false;
+
+    // Interface properties
+    this.visible = true;
+    this.position = { x: 0, y: 0, z: 0 };
+    this.rotation = { x: 0, y: 0, z: 0, w: 1 };
+    this.color = { r: 0, g: 0, b: 0 };
+    this.scale = { x: 1, y: 1, z: 1 };
+    this.opacity = 1;
+
+    // Override default properties with user provided values
     Object.assign(this, properties);
   }
 }
