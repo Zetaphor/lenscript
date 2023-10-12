@@ -19,16 +19,16 @@ Lenscript operates on a scene graph made up of state-managed objects. Each of th
     - User-defined variables
     - LenscriptObject
       - User-defined variables
-      - States
+      - Trigger Properties (e.g., Touching, Hovering, Visible)
+      - Named States
         - Properties
           - Interface Properties (e.g., Color, Position, Scale)
-          - Trigger Properties (e.g., Touching, Hovering, Visible)
 
 #### Property Types:
 
-- **Interface Properties**: These are properties that signal changes to the external interface. Examples include browser, game engine, or virtual world platforms.
+- **Interface Properties**: These are properties that signal changes to the external interface. Interface properties are defined on the current state, and can be changed by the result of triggers or a state transition. Examples include browser, game engine, or virtual world platforms.
 
-- **Trigger Properties**: These are properties that respond to events or changes coming from the external interface. For instance, they detect when an object is hovered over or clicked.
+- **Trigger Properties**: These are properties that respond to events or changes coming from the external interface. Trigger properties are defined on the object separate from the state and thus are not affected by state changes. For instance, they are used to detect when an object is hovered over or clicked.
 
 #### Goal:
 
@@ -36,7 +36,7 @@ The primary objective is to isolate the internal behavior of Lenscript from the 
 
 ### Syntax
 
-### Overview
+#### Overview
 
 An object can contain multiple script lines. A script is a single line that takes the format of **When** _Trigger_ **Then** _Action_.
 
@@ -54,7 +54,7 @@ Commands can also support multiple actions in response to a single trigger by se
 
 This script line is identical to the above line, except it will also destroy the object after triggering the sound effect.
 
-#### Paramters
+#### Parameters
 
 Triggers and actions are able to accept one or more parameters. These are defined by providing the data immediately after the invoking keyword:
 
@@ -65,3 +65,9 @@ Triggers and actions are able to accept one or more parameters. These are define
 ##### Action Parameters
 
 > When touched then emit bubbles
+
+#### State Changes
+
+Object properties are stored in their current state. Transitioning to another state will overwrite these properties with new or default values, facilitating easy animations and transitions.
+
+Example: For a color-changing button, define each color in a separate state. Transition between states in response to a touch trigger.
