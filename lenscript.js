@@ -20,7 +20,7 @@ export class lenscriptObjectProperties {
 export class lenscriptObject {
   #variables = {};
   #currentState = 'default';
-  #states = { 'default': new lenscriptObjectProperties(properties) };
+  #states = { 'default': new lenscriptObjectProperties({}) };
 
   constructor(name) {
     this.name = name;
@@ -40,7 +40,7 @@ export class lenscriptObject {
    * Returns an empty string if the variable is undefined
    *
    * @param {string} name
-   * @param {string} value optional value, if not provided the value of the variable is returned
+   * @param {any} value optional value, if not provided the value of the variable is returned
    */
   var(name, value = null) {
     if (value === null) return this.#variables[name] || '';
@@ -52,11 +52,11 @@ export class lenscriptObject {
    * Returns an empty string if the property is undefined
    *
    * @param {string} name
-   * @param {string} value optional value, if not provided the value of the property is returned
+   * @param {any} value optional value, if not provided the value of the property is returned
    */
   prop(name, value = null) {
     if (value === null) return this.#states[this.#currentState][name] || '';
-    else this.setProperty(name, value.toString());
+    else this.#states[this.#currentState][name] = value;
   }
 
   /**
@@ -110,8 +110,8 @@ export class lenscriptScene {
    * @param {string} name
    * @param {lenscriptObjectProperties} properties
    */
-  add(name, properties = {}) {
-    this.#objects.push(new lenscriptObject(name, properties));
+  add(name) {
+    this.#objects[name] = new lenscriptObject(name);
   }
 
   /**
@@ -140,8 +140,8 @@ export class lenscriptScene {
    * @param {string} name
    * @returns {lenscriptObject}
    */
-  obj(name, value = null) {
-    if (value === null) return this.#objects[name] || '';
+  obj(name) {
+    return this.#objects[name];
   }
 
   /**
