@@ -19,7 +19,7 @@ Lenscript operates on a scene graph made up of state-managed named objects. Each
     - User-defined variables
     - LenscriptObject
       - User-defined variables
-      - Trigger Properties (e.g., Touching, Hovering, Visible)
+      - Trigger Properties (e.g., Touching, Hovering)
       - Named States
         - Properties
           - Interface Properties (e.g., Color, Position, Scale)
@@ -78,7 +78,7 @@ State transitions are done using the "become" keyword, ex:
 
 The above script line will transition from the current state to a state named "pressed".
 
-### Defined Properties
+### Object Properties
 
 #### Trigger Properties
 
