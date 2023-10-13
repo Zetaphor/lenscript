@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Command Autocomplete and Tester</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
 </head>
+
 <body class="p-6">
   <div class="flex flex-col">
     <div class="mb-4">
-      <div id="targetElement" class="w-10 h-10 bg-blue-500 hover:bg-red-500 rounded-md mr-2">Test</div>
+      <div id="targetElement" draggable="true" class="w-10 h-10 bg-blue-500 hover:bg-red-500 rounded-md mr-2">Test</div>
     </div>
     <label for="commandInput" class="mb-2 text-lg">Type a command:</label>
-    <textarea type="text" id="commandInput" placeholder="Type a command..." class="mb-2 p-2 border rounded h-full block">
+    <textarea type="text" id="commandInput" placeholder="Type a command..."
+      class="mb-2 p-2 border rounded h-full block">
       When shaken then play doorbell
       When touched then play doorbell with high-pitch 120% volume
       When shaken then play laughter, emit bubbles
@@ -25,6 +28,7 @@
     <button id="testCommands" class="p-2 bg-blue-500 text-white rounded">Test Commands</button>
   </div>
 
-  <script src="interfaces/browser.js" type="module"></script>
+  <script src="./browser.js" type="module"></script>
 </body>
+
 </html>
