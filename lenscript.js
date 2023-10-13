@@ -1,26 +1,28 @@
-export class lenscriptObjectProperties {
-  constructor(properties = {}) {
-    // Trigger properties
-    this.touching = false;
-    this.hovering = false;
-
-    // Interface properties
+class lenscriptInterfaceProperties {
+  constructor() {
     this.visible = true;
     this.position = { x: 0, y: 0, z: 0 };
     this.rotation = { x: 0, y: 0, z: 0, w: 1 };
     this.color = { r: 0, g: 0, b: 0 };
     this.scale = { x: 1, y: 1, z: 1 };
     this.opacity = 1;
+  }
+}
 
-    // Override default properties with user provided values
-    Object.assign(this, properties);
+class lenscriptTriggerProperties {
+  constructor() {
+    this.touching = false;
+    this.hovering = false;
+    this.waitingForTouches = false;
+    this.waitingForTells = false;
   }
 }
 
 export class lenscriptObject {
   #variables = {};
   #currentState = 'default';
-  #states = { 'default': new lenscriptObjectProperties({}) };
+  #triggerProperties = new lenscriptTriggerProperties();
+  #states = { 'default': new lenscriptInterfaceProperties() };
   #parentScene = null;
 
   constructor(parent, name) {
@@ -240,3 +242,4 @@ export function parseCommand(command) {
 export function parseCommands(commands) {
   return commands.map(command => parseCommand(command));
 }
+
