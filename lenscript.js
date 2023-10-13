@@ -141,6 +141,15 @@ export class lenscriptScene {
   }
 
   /**
+   * Trigger an action
+   * @param {*} name
+   * @param  {...any} params
+   */
+  trigger(name, ...params) {
+    console.log('Received trigger', name, params);
+  }
+
+  /**
    * Add an object to the scene
    *
    * @param {string} name
@@ -186,15 +195,6 @@ export class lenscriptScene {
    */
   objects() {
     return this.#objects;
-  }
-
-  /**
-   * Set the transition callback function
-   *
-   * @param {function} callback
-   */
-  setCallback(callback) {
-    this.#transitionCallback = callback;
   }
 }
 
