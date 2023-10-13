@@ -21,9 +21,11 @@ export class lenscriptObject {
   #variables = {};
   #currentState = 'default';
   #states = { 'default': new lenscriptObjectProperties({}) };
+  #parentScene = null;
 
-  constructor(name) {
+  constructor(parent, name) {
     this.name = name;
+    this.#parentScene = parent;
   }
 
   /**
@@ -42,7 +44,7 @@ export class lenscriptObject {
    * @param {string} name
    * @param {any} value optional value, if not provided the value of the variable is returned
    */
-  var(name, value = null) {
+  variable(name, value = null) {
     if (value === null) return this.#variables[name] || '';
     else this.#variables[name] = value.toString();
   }
@@ -54,26 +56,36 @@ export class lenscriptObject {
    * @param {string} name
    * @param {any} value optional value, if not provided the value of the property is returned
    */
-  prop(name, value = null) {
+  property(name, value = null) {
     if (value === null) return this.#states[this.#currentState][name] || '';
     else this.#states[this.#currentState][name] = value;
   }
 
   /**
-   * Get the current state
+   * Get the current state name
    *
-   * @returns {object} the current state
+   * @returns {string} the current state name
    */
   state() {
-    return this.#states[this.#currentState];
+    return this.#currentState;
   }
 
   /**
-   * Set the current state
+   * Get all of the states
+   *
+   * @returns {Array<string>} the names of all states
+   */
+  states() {
+    return Object.keys(this.#states);
+  }
+
+  /**
+   * Set the current state and trigger the transition callback
    *
    * @param {string} name
    */
   setState(name) {
+    this.#parentScene.objectStateTransitioned(this.name, this.#currentState, name, this.#states[name]);
     this.#currentState = name;
   }
 
@@ -89,6 +101,7 @@ export class lenscriptObject {
 
   /**
    * Remove a state
+   *
    * @param {string} name
    */
   removeState(name) {
@@ -99,9 +112,30 @@ export class lenscriptObject {
 export class lenscriptScene {
   #variables = {};
   #objects = {};
+  #transitionCallback = null;
 
-  constructor(objects = []) {
-    this.#objects = objects;
+  /**
+   * Trigger the transition callback function when a childs state changes
+   * This should only be called from a child object
+   *
+   * @param {string} name
+   * @param {string} prevName the previous state name
+   * @param {string} newName the new state name
+   * @param {lenscriptObjectProperties} state the new state properties
+   */
+  objectStateTransitioned(name, prevName, newName, state) {
+    if (this.#transitionCallback) {
+      this.#transitionCallback(name, prevName, newName, state);
+    }
+  }
+
+  /**
+   * Set the transition callback function
+   *
+   * @param {function} callback
+   */
+  registerTransitionCallback(callback) {
+    this.#transitionCallback = callback;
   }
 
   /**
@@ -111,7 +145,7 @@ export class lenscriptScene {
    * @param {lenscriptObjectProperties} properties
    */
   add(name) {
-    this.#objects[name] = new lenscriptObject(name);
+    this.#objects[name] = new lenscriptObject(this, name);
   }
 
   /**
@@ -129,18 +163,18 @@ export class lenscriptScene {
    * @param {string} name
    * @param {string} value optional value, if not provided the value of the variable is returned
    */
-  var(name, value = null) {
+  variable(name, value = null) {
     if (value === null) return this.#variables[name] || '';
     else this.#variables[name] = value.toString();
   }
 
   /**
-   * Get an object from the scene
+   * Get a single object from the scene
    *
    * @param {string} name
    * @returns {lenscriptObject}
    */
-  obj(name) {
+  object(name) {
     return this.#objects[name];
   }
 
@@ -150,6 +184,15 @@ export class lenscriptScene {
    */
   objects() {
     return this.#objects;
+  }
+
+  /**
+   * Set the transition callback function
+   *
+   * @param {function} callback
+   */
+  setCallback(callback) {
+    this.#transitionCallback = callback;
   }
 }
 
