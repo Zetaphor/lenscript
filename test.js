@@ -15,4 +15,4 @@ testObject.property('color', { r: 255, g: 0, b: 0 });
 console.log('Default color', testObject.property('color'))
 testObject.addState('hovering', { color: { r: 0, g: 255, b: 0 } });
 testObject.setState('hovering');
-console.log('Hovering color', testObject.property('color'))
+console.log('Hovering color', testObject.property('color'));
