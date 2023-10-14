@@ -1,122 +1,14 @@
-export class lenscriptObject {
-  #variables = {};
-  #currentState = 'default';
-  #states = {};
-  #parentScene = null;
-  constructor(parent, name, defaultProperties) {
-    if (!parent) throw new Error('Object must have a parent');
+class lenscriptObject {
+  variables = {};
+  currentState = 'default';
+  states = {};
+  parentScene = null;
+  constructor(name, defaultProperties) {
     if (!name) throw new Error('Object must have a name');
     if (!defaultProperties) throw new Error('Object must have default properties');
 
     this.name = name;
-    this.#parentScene = parent;
-    this.addState('default', defaultProperties);
-  }
-
-  /**
-   * Set the objects name
-   *
-   * @param {string} name
-   * @throws {Error} if the object already exists
-   */
-  setName(name) {
-    if (!name) throw new Error('Object must have a name');
-    this.name = name;
-  }
-
-  /**
-   * Get or set a variable value. If no value is provided the value of the variable is returned
-   * Returns an empty string if the variable is undefined
-   *
-   * @param {string} name
-   * @param {any} value optional value, if not provided the value of the variable is returned
-   */
-  variable(name, value = null) {
-    if (value === null) return this.#variables[name] || '';
-    else this.#variables[name] = value.toString();
-  }
-
-  /**
-   * Get all of the objects variables
-   *
-   * @returns {object} the variables
-   */
-  variables() {
-    return this.#variables;
-  }
-
-  /**
-   * Get or set a state property value. If no value is provided the value of the property is returned
-   * Returns an empty string if the property is undefined
-   * @param {string} name
-   * @param {any} value optional value, if not provided the value of the property is returned
-   */
-  property(name, value = null) {
-    if (value === null) return this.#states[this.#currentState][name] || '';
-    else this.#states[this.#currentState][name] = value;
-  }
-
-  /**
-   * Get all of the objects properties from the current state
-   *
-   * @returns {object} the properties
-   */
-  properties() {
-    return this.#states[this.#currentState];
-  }
-
-  /**
-   * Get the current state name
-   *
-   * @returns {string} the current state name
-   */
-  state() {
-    return this.#currentState;
-  }
-
-  /**
-   * Get all of the objects states
-   *
-   * @returns {Array<string>} the names of all states
-   */
-  states() {
-    return Object.keys(this.#states);
-  }
-
-  /**
-   * Set the current state and trigger the transition callback
-   *
-   * @param {string} name
-   * @throws {Error} if the state does not exist
-   */
-  setState(name) {
-    if (!this.#states[name]) throw new Error(`State ${name} does not exist`);
-    this.#parentScene._objectStateTransitioned(this.name, this.#currentState, name, this.#states[name]);
-    this.#currentState = name;
-  }
-
-  /**
-   * Add a state to the object
-   *
-   * @param {string} name
-   * @param {lenscriptObjectProperties} properties
-   * @throws {Error} if the state name is empty*
-   * @throws {Error} if the state already exists
-   */
-  addState(name, properties = {}) {
-    if (!name) throw new Error('State must have a name');
-    if (this.#states[name]) throw new Error(`State ${name} already exists`);
-    this.#states[name] = properties;
-  }
-
-  /**
-   * Remove a state
-   *
-   * @param {string} name
-   */
-  removeState(name) {
-    if (!this.#states[name]) throw new Error(`State ${name} does not exist`);
-    delete this.#states[name];
+    this.states = { 'default': defaultProperties };
   }
 }
 
@@ -150,7 +42,7 @@ export class lenscriptScene {
    * @param {lenscriptObjectProperties} state the new state properties
    * @throws {Error} if the scene does not have a transition callback
    */
-  _objectStateTransitioned(name, prevName, newName, state) {
+  #objectStateTransitioned(name, prevName, newName, state) {
     if (!this.#transitionCallback) throw new Error('Scene must have a transition callback');
     this.#transitionCallback(name, prevName, newName, state);
   }
@@ -224,7 +116,7 @@ export class lenscriptScene {
     if (!properties) throw new Error('Object must have properties');
     if (this.#objects[name]) throw new Error(`Object ${name} already exists`);
     this.#objects[name] = {
-      object: new lenscriptObject(this, name, properties),
+      object: new lenscriptObject(name, properties),
       activeTriggers: [],
       scripts: [],
       parsedScripts: [],
@@ -268,9 +160,9 @@ export class lenscriptScene {
     if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
     return {
       name: name,
-      state: this.#objects[name].object.state(),
-      properties: this.#objects[name].object.properties(),
-      variables: this.#objects[name].object.variables(),
+      state: this.#objects[name].currentState,
+      properties: this.#objects[name].states[this.#objects[name].currentState],
+      variables: this.#objects[name].variables,
       scripts: this.#objects[name].scripts,
     }
   }
@@ -305,13 +197,61 @@ export class lenscriptScene {
    *
    * @param {string} name
    * @param {string} value optional value, if not provided the value of the state is returned
+   * @returns {string} the state*
    * @throws {Error} if the object does not exist
+   * @throws {Error} if the state does not exist
    */
   objectState(name, value = null) {
     this.#validateScene();
     if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
-    if (value === null) return this.#objects[name].object.state();
-    else this.#objects[name].object.setState(value);
+    if (value === null) return this.#objects[name].states[this.#objects[name].currentState];
+    if (this.#objects[name].states[value] === undefined) {
+      throw new Error(`Object ${name} does not have a state ${value}`);
+    }
+    else {
+      this.#objects[name].currentState = value;
+      this.#objectStateTransitioned(name, this.#objects[name].currentState, value);
+    }
+  }
+
+  /**
+   * Add a state to an object
+   *
+   * @param {string} name
+   * @param {string} state
+   * @param {object} properties
+   * @throws {Error} if the object does not exist
+   * @throws {Error} if the state already exists
+   * @throws {Error} if the properties are not an object
+   */
+  objectAddState(name, state, properties) {
+    this.#validateScene();
+    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
+    if (this.#objects[name].states[state] !== undefined) {
+      throw new Error(`Object ${name} already has a state ${state}`);
+    }
+    if (typeof properties !== 'object') throw new Error('State properties must be an object');
+    this.#objects[name].states[state] = properties;
+  }
+
+  /**
+   * Remove a state from an object. If the state is the current state, the current state will revert to the default state
+   *
+   * @param {string} name
+   * @param {string} state
+   * @throws {Error} if the object does not exist
+   * @throws {Error} if the state does not exist
+   * @throws {Error} if the state is the default state
+   */
+  objectRemoveState(name, state) {
+    this.#validateScene();
+    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
+    if (this.#objects[name].states[state] === undefined) {
+      throw new Error(`Object ${name} does not have a state ${state}`);
+    }
+    if (state === 'default') throw new Error('Cannot remove the default state');
+    if (this.#objects.currentState === state) this.#objects.currentState = 'default';
+    delete this.#objects[name].states[state];
   }
 
   /**
@@ -322,11 +262,16 @@ export class lenscriptScene {
    * @param {any} value optional value, if not provided the value of the property is returned
    * @returns {any} the property value
    * @throws {Error} if the object does not exist
+   * @throws {Error} if the property does not exist
    */
   objectProperty(name, property, value = null) {
     this.#validateScene();
     if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
-    return this.#objects[name].property(property, value);
+    if (this.objecs[name].states[this.#objects[name].currentState][property] === undefined) {
+      throw new Error(`Object ${name} does not have a property ${property}`);
+    }
+    if (value === null) return this.#objects[name].states[this.#objects[name].currentState][property];
+    else return this.#objects[name].states[this.#objects[name].currentState][property] = value;
   }
 
   /**
@@ -338,10 +283,15 @@ export class lenscriptScene {
    * @param {any} value optional value, if not provided the value of the variable is returned
    * @return {any} the variable value
    * @throws {Error} if the object does not exist
+   * @throws {Error} if the variable does not exist
    */
   objectVariable(name, variable, value = null) {
     this.#validateScene();
     if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
+    if (this.#objects[name].variables[variable] === undefined) {
+      throw new Error(`Object ${name} does not have a variable ${variable}`);
+    }
+    if (value === null) return this.#objects[name].variables[variable];
     return this.#objects[name].variable(variable, value);
   }
 
