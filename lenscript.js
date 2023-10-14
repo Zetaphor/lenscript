@@ -188,7 +188,8 @@ export class lenscriptScene {
     this.#objects[name] = {
       object: new lenscriptObject(this, name, properties),
       activeTriggers: [],
-      scripts: []
+      scripts: [],
+      parsedScripts: [],
     }
   }
 
@@ -289,7 +290,8 @@ export class lenscriptScene {
       validScripts.push(script);
     }
     this.#objects[name].activeTriggers = activeTriggers;
-    this.#objects[name].scripts = validScripts;
+    this.#objects[name].parsedScripts = validScripts;
+    this.#objects[name].scripts = scripts;
   }
 
   /**
