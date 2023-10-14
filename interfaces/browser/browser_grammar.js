@@ -56,9 +56,6 @@ export const grammar = {
     ]
   },
   actions: {
-    rename: [
-      "call me [value]"
-    ],
     play: [
       "play [value]",
       "play [value] [volume]",
@@ -80,10 +77,6 @@ export const grammar = {
     ],
     hide: [
       "hide"
-    ],
-    emit: [
-      "emit",
-      "emit [value]"
     ],
     become: [
       "become [value]"
