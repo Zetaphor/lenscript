@@ -1,9 +1,21 @@
-import { lenscriptScene } from "./lenscript.js";
+import { lenscriptScene } from "../../lenscript.js";
+import { grammar } from "./grammar.js";
 
 const targetElement = document.getElementById('targetElement');
 const targetInput = document.getElementById('commandInput');
 let parsedCommands;
 
+
+class browserInterfaceProperties {
+  constructor() {
+    this.visible = true;
+    this.position = { x: 0, y: 0, z: 0 };
+    this.rotation = { x: 0, y: 0, z: 0, w: 1 };
+    this.color = { r: 0, g: 0, b: 0 };
+    this.scale = { x: 1, y: 1, z: 1 };
+    this.opacity = 1;
+  }
+}
 
 function objectTransitioned(name, prevState, nextState, state) {
   console.log(`Object ${name} transitioned from ${prevState} to ${nextState}`);
@@ -12,6 +24,7 @@ function objectTransitioned(name, prevState, nextState, state) {
 
 const targetObjectName = 'test';
 const scene = new lenscriptScene();
+scene.registerGrammar(grammar);
 scene.registerTransitionCallback(objectTransitioned);
 scene.add(targetObjectName);
 
