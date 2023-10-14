@@ -23,12 +23,14 @@ class lenscriptTriggerProperties {
 export class lenscriptObject {
   #variables = {};
   #currentState = 'default';
-  #triggerProperties = new lenscriptTriggerProperties();
-  #states = { 'default': new lenscriptInterfaceProperties() };
+  #states = {};
   #parentScene = null;
-  #triggers = {};
+  #scriptData = [];
+  constructor(parent, name, defaultProperties) {
+    if (!parent) throw new Error('Object must have a parent');
+    if (!name) throw new Error('Object must have a name');
+    if (!defaultProperties) throw new Error('Object must have default properties');
 
-  constructor(parent, name) {
     this.name = name;
     this.#parentScene = parent;
   }
@@ -39,6 +41,7 @@ export class lenscriptObject {
    * @param {string} name
    */
   setName(name) {
+    if (!name) throw new Error('Object must have a name');
     this.name = name;
   }
 
@@ -90,6 +93,7 @@ export class lenscriptObject {
    * @param {string} name
    */
   setState(name) {
+    if (!this.#states[name]) throw new Error(`State ${name} does not exist`);
     this.#parentScene.objectStateTransitioned(this.name, this.#currentState, name, this.#states[name]);
     this.#currentState = name;
   }
@@ -101,6 +105,8 @@ export class lenscriptObject {
    * @param {lenscriptObjectProperties} properties
    */
   addState(name, properties = {}) {
+    if (!name) throw new Error('State must have a name');
+    if (this.#states[name]) throw new Error(`State ${name} already exists`);
     this.#states[name] = new lenscriptObjectProperties(properties);
   }
 
@@ -110,6 +116,7 @@ export class lenscriptObject {
    * @param {string} name
    */
   removeState(name) {
+    if (!this.#states[name]) throw new Error(`State ${name} does not exist`);
     delete this.#states[name];
   }
 }
@@ -129,9 +136,8 @@ export class lenscriptScene {
    * @param {lenscriptObjectProperties} state the new state properties
    */
   objectStateTransitioned(name, prevName, newName, state) {
-    if (this.#transitionCallback) {
+    if (!this.#transitionCallback) throw new Error('Object must have a transition callback');
       this.#transitionCallback(name, prevName, newName, state);
-    }
   }
 
   /**
@@ -140,6 +146,7 @@ export class lenscriptScene {
    * @param {function} callback
    */
   registerTransitionCallback(callback) {
+    if (typeof callback !== 'function') throw new Error('Transition callback must be a function');
     this.#transitionCallback = callback;
   }
 
@@ -159,6 +166,7 @@ export class lenscriptScene {
    * @param {lenscriptObjectProperties} properties
    */
   add(name) {
+    if (!name) throw new Error('Object must have a name');
     this.#objects[name] = new lenscriptObject(this, name);
   }
 
@@ -167,6 +175,7 @@ export class lenscriptScene {
    * @param {string} name
   */
   remove(name) {
+    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
     delete this.#objects[name];
   }
 
@@ -189,6 +198,7 @@ export class lenscriptScene {
    * @returns {lenscriptObject}
    */
   object(name) {
+    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
     return this.#objects[name];
   }
 
