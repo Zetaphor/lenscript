@@ -298,6 +298,37 @@ export class lenscriptScene {
   }
 
   /**
+   * Get or set an object property value on the objects current state. If no value is provided the value of the property is returned
+   *
+   * @param {string} name
+   * @param {string} property
+   * @param {any} value optional value, if not provided the value of the property is returned
+   * @returns {any} the property value
+   * @throws {Error} if the object does not exist
+   */
+  objectProperty(name, property, value = null) {
+    this.#validateScene();
+    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
+    return this.#objects[name].property(property, value);
+  }
+
+  /**
+   * Get or set an object variable value. If no value is provided the value of the variable is returned
+   * Returns an empty string if the variable is undefined
+   *
+   * @param {string} name
+   * @param {string} variable
+   * @param {any} value optional value, if not provided the value of the variable is returned
+   * @return {any} the variable value
+   * @throws {Error} if the object does not exist
+   */
+  objectVariable(name, variable, value = null) {
+    this.#validateScene();
+    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
+    return this.#objects[name].variable(variable, value);
+  }
+
+  /**
    * Validate scripts for correct trigger and action syntax
    *
    * @param {array<string>} scripts
