@@ -301,6 +301,20 @@ export class lenscriptScene {
   }
 
   /**
+   * Get or set an object state. If no value is provided the value of the state is returned
+   *
+   * @param {string} name
+   * @param {string} value optional value, if not provided the value of the state is returned
+   * @throws {Error} if the object does not exist
+   */
+  objectState(name, value = null) {
+    this.#validateScene();
+    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
+    if (value === null) return this.#objects[name].object.state();
+    else this.#objects[name].object.setState(value);
+  }
+
+  /**
    * Get or set an object property value on the objects current state. If no value is provided the value of the property is returned
    *
    * @param {string} name
