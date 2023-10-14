@@ -160,7 +160,7 @@ export class lenscriptScene {
 
   /**
    * Trigger an action
-   * @param {*} name
+   * @param {string} name
    * @param  {...any} params
    */
   trigger(name, action, ...params) {
