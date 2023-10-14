@@ -17,6 +17,7 @@ export class lenscriptObject {
    * Set the objects name
    *
    * @param {string} name
+   * @throws {Error} if the object already exists
    */
   setName(name) {
     if (!name) throw new Error('Object must have a name');
@@ -69,6 +70,7 @@ export class lenscriptObject {
    * Set the current state and trigger the transition callback
    *
    * @param {string} name
+   * @throws {Error} if the state does not exist
    */
   setState(name) {
     if (!this.#states[name]) throw new Error(`State ${name} does not exist`);
@@ -81,6 +83,8 @@ export class lenscriptObject {
    *
    * @param {string} name
    * @param {lenscriptObjectProperties} properties
+   * @throws {Error} if the state name is empty*
+   * @throws {Error} if the state already exists
    */
   addState(name, properties = {}) {
     if (!name) throw new Error('State must have a name');
@@ -106,6 +110,13 @@ export class lenscriptScene {
   #actionCallback = null;
   #grammar = null
 
+  /**
+   * Validate the scene
+   *
+   * @throws {Error} if the scene does not have a transition callback
+   * @throws {Error} if the scene does not have an action callback
+   * @throws {Error} if the scene does not have a grammar
+   */
   #validateScene() {
     if (!this.#transitionCallback) throw new Error('Scene must have a transition callback');
     if (!this.#actionCallback) throw new Error('Scene must have an action callback');
@@ -120,6 +131,7 @@ export class lenscriptScene {
    * @param {string} prevName the previous state name
    * @param {string} newName the new state name
    * @param {lenscriptObjectProperties} state the new state properties
+   * @throws {Error} if the scene does not have a transition callback
    */
   _objectStateTransitioned(name, prevName, newName, state) {
     if (!this.#transitionCallback) throw new Error('Scene must have a transition callback');
@@ -130,6 +142,7 @@ export class lenscriptScene {
    * Set the transition callback function
    *
    * @param {function} callback
+   * @throws {Error} if the scene does not have a transition callback
    */
   registerTransitionCallback(callback) {
     if (typeof callback !== 'function') throw new Error('Transition callback must be a function');
@@ -140,6 +153,7 @@ export class lenscriptScene {
    * Set the action callback function
    *
    * @param {function} callback
+   * @throws {Error} if the scene does not have an action callback
    */
   registerActionCallback(callback) {
     if (typeof callback !== 'function') throw new Error('Action callback must be a function');
@@ -150,6 +164,9 @@ export class lenscriptScene {
    * Set the command grammar for parsing commands
    *
    * @param {object} grammar
+   * @throws {Error} if the grammar is not an object
+   * @throws {Error} if the grammar triggers is not an object
+   * @throws {Error} if the grammar actions is not an object
    */
   registerGrammar(grammar) {
     if (typeof grammar !== 'object') throw new Error('Grammar must be an object');
@@ -179,6 +196,9 @@ export class lenscriptScene {
    *
    * @param {string} name
    * @param {object} properties
+   * @throws {Error} if the object already exists
+   * @throws {Error} if the object does not have a name
+   * @throws {Error} if the object does not have properties
    */
   add(name, properties) {
     this.#validateScene();
@@ -196,6 +216,7 @@ export class lenscriptScene {
   /**
    * Remove an object from the scene
    * @param {string} name
+   * @throws {Error} if the object does not exist
   */
   remove(name) {
     this.#validateScene();
@@ -221,6 +242,7 @@ export class lenscriptScene {
    *
    * @param {string} name
    * @returns {lenscriptObject} the scene object
+   * @throws {Error} if the object does not exist
    */
   object(name) {
     this.#validateScene();
@@ -235,6 +257,19 @@ export class lenscriptScene {
   objects() {
     this.#validateScene();
     return this.#objects;
+  }
+
+  /**
+   * Get all of the scripts for an object
+   *
+   * @param {string} name
+   * @returns {array<string>} an array of scripts
+   * @throws {Error} if the object does not exist
+   */
+  objectScripts(name) {
+    this.#validateScene();
+    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
+    return this.#objects[name].scripts;
   }
 
   /**
