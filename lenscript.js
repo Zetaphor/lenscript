@@ -4,6 +4,7 @@ export class lenscriptObject {
   #states = {};
   #parentScene = null;
   #scriptData = [];
+  #activeTriggers = [];
   constructor(parent, name, defaultProperties) {
     if (!parent) throw new Error('Object must have a parent');
     if (!name) throw new Error('Object must have a name');
@@ -49,14 +50,25 @@ export class lenscriptObject {
   }
 
   /**
-   * Get or set an objects scripts. If no value is provided the current scripts are returned
+   * Set an objects scripts
    *
-   * @param {array} value
-   * @returns {array} the objects scripts
+   * @param {object} data object containing the scripts triggers and actions
    */
-  scripts(value = null) {
-    if (value === null) return this.#scriptData;
-    else this.#scriptData = value;
+  setScripts(data) {
+    if (!data) throw new Error('Missing script data');
+    if (!data.triggers) throw new Error('Missing triggers');
+    if (!data.scripts) throw new Error('Missing scripts');
+    this.#scriptData = data.scripts;
+    this.#activeTriggers = data.triggers;
+  }
+
+  /**
+   * Get the objects scripts
+   *
+   * @returns {object} the objects scripts
+  */
+  scripts() {
+    return this.#scriptData;
   }
 
   /**
@@ -227,6 +239,62 @@ export class lenscriptScene {
   }
 
   /**
+   * Validate scripts for correct trigger and action syntax
+   *
+   * @param {array<string>} scripts
+   * @returns {object} { valid: boolean, errors: array }
+   */
+  validateScripts(scripts) {
+    let errors = [];
+    for (let i = 0; i < scripts.length; i++) {
+      let script = this.#parseCommand(scripts[i]);
+      if (!script.isValid) {
+        errors.push({
+          index: i,
+          message: "Invalid trigger"
+        })
+      }
+
+      for (let j = 0; j < script.actions.length; j++) {
+        if (script.actions[j].isValid) continue;
+        errors.push({
+          index: i,
+          message: "Invalid action"
+        });
+        break;
+      }
+    }
+    return { valid: !errors.length, errors: errors };
+  }
+
+  /**
+   * Set an objects scripts and triggers
+   *
+   * @param {string} name
+   * @param {array<string>} scripts an array of scripts
+   */
+  setScripts(name, scripts) {
+    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
+    this.#objects[name].scripts(scripts);
+    let activeTriggers = [];
+    let validScripts = [];
+    for (let i = 0; i < scripts.length; i++) {
+      let script = this.#parseCommand(scripts[i]);
+      if (!script.isValid) continue;
+      let actionsValid = true;
+      for (let j = 0; j < actions.length; j++) {
+        if (actions[j].isValid) continue;
+        actionsValid = false;
+        break;
+      }
+      if (!actionsValid) continue;
+      activeTriggers.push(script.trigger);
+      validScripts.push(script);
+    }
+    this.#objects[name].setScripts({ triggers: activeTriggers, scripts: validScripts });
+  }
+
+  /**
    * Check if a given command string matches a pattern and returns the extracted parameters
    * @param {string} commandString
    * @param {string} pattern
@@ -262,7 +330,7 @@ export class lenscriptScene {
    * @param {string} command
    * @returns {object} { isValid: boolean, trigger: string, triggerParams: object, actions: array }
    */
-  parseCommand(command) {
+  #parseCommand(command) {
     if (!command) return null;
     const result = {
       isValid: false,
