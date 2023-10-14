@@ -37,15 +37,32 @@ export class lenscriptObject {
   }
 
   /**
+   * Get all of the objects variables
+   *
+   * @returns {object} the variables
+   */
+  variables() {
+    return this.#variables;
+  }
+
+  /**
    * Get or set a state property value. If no value is provided the value of the property is returned
    * Returns an empty string if the property is undefined
-   *
    * @param {string} name
    * @param {any} value optional value, if not provided the value of the property is returned
    */
   property(name, value = null) {
     if (value === null) return this.#states[this.#currentState][name] || '';
     else this.#states[this.#currentState][name] = value;
+  }
+
+  /**
+   * Get all of the objects properties from the current state
+   *
+   * @returns {object} the properties
+   */
+  properties() {
+    return this.#states[this.#currentState];
   }
 
   /**
