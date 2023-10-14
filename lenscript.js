@@ -14,7 +14,7 @@ class lenscriptObject {
 
 export class lenscriptScene {
   #variables = {};
-  #objects = {};
+  #children = {};
   #transitionCallback = null;
   #actionCallback = null;
   #grammar = null
@@ -94,7 +94,7 @@ export class lenscriptScene {
    */
   trigger(name, trigger, ...params) {
     this.#validateScene();
-    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
+    if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
     if (!this.#grammar.triggers[trigger]) throw new Error(`Trigger ${trigger} does not exist`);
     const objectTriggers = this.objectTriggers(name);
     if (!objectTriggers.includes(trigger)) throw new Error(`Object ${name} does not have trigger ${trigger}`);
@@ -118,8 +118,8 @@ export class lenscriptScene {
     this.#validateScene();
     if (!name) throw new Error('Object must have a name');
     if (!properties) throw new Error('Object must have properties');
-    if (this.#objects[name]) throw new Error(`Object ${name} already exists`);
-    this.#objects[name] = {
+    if (this.#children[name]) throw new Error(`Object ${name} already exists`);
+    this.#children[name] = {
       object: new lenscriptObject(name, properties),
       activeTriggers: [],
       scripts: [],
@@ -135,8 +135,8 @@ export class lenscriptScene {
   */
   remove(name) {
     this.#validateScene();
-    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
-    delete this.#objects[name];
+    if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
+    delete this.#children[name];
   }
 
   /**
@@ -161,15 +161,15 @@ export class lenscriptScene {
    */
   object(name) {
     this.#validateScene();
-    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
+    if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
     return {
       name: name,
-      state: this.#objects[name].object.currentState,
-      triggers: this.#objects[name].activeTriggers,
-      properties: this.#objects[name].object.states[this.#objects[name].object.currentState],
-      variables: this.#objects[name].object.variables,
-      scripts: this.#objects[name].scripts,
-      parsedScripts: this.#objects[name].parsedScripts,
+      state: this.#children[name].object.currentState,
+      triggers: this.#children[name].activeTriggers,
+      properties: this.#children[name].object.states[this.#children[name].object.currentState],
+      variables: this.#children[name].object.variables,
+      scripts: this.#children[name].scripts,
+      parsedScripts: this.#children[name].parsedScripts,
     }
   }
 
@@ -180,7 +180,7 @@ export class lenscriptScene {
    */
   objects() {
     this.#validateScene();
-    return Object.values(this.#objects).map(object => {
+    return Object.values(this.#children).map(object => {
       return this.object(object.name);
     });
   }
@@ -194,8 +194,8 @@ export class lenscriptScene {
    */
   objectScripts(name) {
     this.#validateScene();
-    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
-    return this.#objects[name].scripts;
+    if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
+    return this.#children[name].scripts;
   }
 
   /**
@@ -207,8 +207,8 @@ export class lenscriptScene {
    */
   objectTriggers(name) {
     this.#validateScene();
-    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
-    return this.#objects[name].activeTriggers;
+    if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
+    return this.#children[name].activeTriggers;
   }
 
   /**
@@ -222,14 +222,14 @@ export class lenscriptScene {
    */
   objectState(name, value = null) {
     this.#validateScene();
-    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
-    if (value === null) return this.#objects[name].object.states[this.#objects[name].object.currentState];
-    if (this.#objects[name].object.states[value] === undefined) {
+    if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
+    if (value === null) return this.#children[name].object.states[this.#children[name].object.currentState];
+    if (this.#children[name].object.states[value] === undefined) {
       throw new Error(`Object ${name} does not have a state ${value}`);
     }
     else {
-      this.#objects[name].object.currentState = value;
-      this.#objectStateTransitioned(name, this.#objects[name].object.currentState, value);
+      this.#children[name].object.currentState = value;
+      this.#objectStateTransitioned(name, this.#children[name].object.currentState, value);
     }
   }
 
@@ -245,12 +245,12 @@ export class lenscriptScene {
    */
   objectAddState(name, state, properties) {
     this.#validateScene();
-    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
-    if (this.#objects[name].object.states[state] !== undefined) {
+    if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
+    if (this.#children[name].object.states[state] !== undefined) {
       throw new Error(`Object ${name} already has a state ${state}`);
     }
     if (typeof properties !== 'object') throw new Error('State properties must be an object');
-    this.#objects[name].object.states[state] = properties;
+    this.#children[name].object.states[state] = properties;
   }
 
   /**
@@ -264,13 +264,13 @@ export class lenscriptScene {
    */
   objectRemoveState(name, state) {
     this.#validateScene();
-    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
-    if (this.#objects[name].object.states[state] === undefined) {
+    if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
+    if (this.#children[name].object.states[state] === undefined) {
       throw new Error(`Object ${name} does not have a state ${state}`);
     }
     if (state === 'default') throw new Error('Cannot remove the default state');
-    if (this.#objects[name].objects.currentState === state) this.#objects[name].object.currentState = 'default';
-    delete this.#objects[name].object.states[state];
+    if (this.#children[name].objects.currentState === state) this.#children[name].object.currentState = 'default';
+    delete this.#children[name].object.states[state];
   }
 
   /**
@@ -285,12 +285,12 @@ export class lenscriptScene {
    */
   objectProperty(name, property, value = null) {
     this.#validateScene();
-    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
-    if (this.objecs[name].states[this.#objects[name].object.currentState][property] === undefined) {
+    if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
+    if (this.objecs[name].states[this.#children[name].object.currentState][property] === undefined) {
       throw new Error(`Object ${name} does not have a property ${property}`);
     }
-    if (value === null) return this.#objects[name].object.states[this.#objects[name].object.currentState][property];
-    else return this.#objects[name].object.states[this.#objects[name].object.currentState][property] = value;
+    if (value === null) return this.#children[name].object.states[this.#children[name].object.currentState][property];
+    else return this.#children[name].object.states[this.#children[name].object.currentState][property] = value;
   }
 
   /**
@@ -306,12 +306,12 @@ export class lenscriptScene {
    */
   objectVariable(name, variable, value = null) {
     this.#validateScene();
-    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
-    if (this.#objects[name].variables[variable] === undefined) {
+    if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
+    if (this.#children[name].variables[variable] === undefined) {
       throw new Error(`Object ${name} does not have a variable ${variable}`);
     }
-    if (value === null) return this.#objects[name].variables[variable];
-    return this.#objects[name].variables[variable] = value;
+    if (value === null) return this.#children[name].variables[variable];
+    return this.#children[name].variables[variable] = value;
   }
 
   /**
@@ -350,7 +350,7 @@ export class lenscriptScene {
    * @param {array<string>} scripts an array of scripts
    */
   setScripts(name, scripts) {
-    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
+    if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
     let activeTriggers = [];
     let validScripts = [];
     for (let i = 0; i < scripts.length; i++) {
@@ -366,9 +366,9 @@ export class lenscriptScene {
       activeTriggers.push(script.trigger);
       validScripts.push(script);
     }
-    this.#objects[name].activeTriggers = activeTriggers;
-    this.#objects[name].parsedScripts = validScripts;
-    this.#objects[name].scripts = scripts;
+    this.#children[name].activeTriggers = activeTriggers;
+    this.#children[name].parsedScripts = validScripts;
+    this.#children[name].scripts = scripts;
   }
 
   /**
