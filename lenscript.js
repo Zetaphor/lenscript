@@ -75,7 +75,7 @@ export class lenscriptObject {
   }
 
   /**
-   * Get all of the states
+   * Get all of the objects states
    *
    * @returns {Array<string>} the names of all states
    */
@@ -258,7 +258,7 @@ export class lenscriptScene {
    * Get a single object from the scene
    *
    * @param {string} name
-   * @returns {lenscriptObject} the scene object
+   * @returns {lenscriptObject} { name, properties, variables, scripts }
    * @throws {Error} if the object does not exist
    */
   object(name) {
