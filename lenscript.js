@@ -125,6 +125,7 @@ export class lenscriptScene {
   #variables = {};
   #objects = {};
   #transitionCallback = null;
+  #grammar = null
 
   /**
    * Trigger the transition callback function when a childs state changes
@@ -148,6 +149,18 @@ export class lenscriptScene {
   registerTransitionCallback(callback) {
     if (typeof callback !== 'function') throw new Error('Transition callback must be a function');
     this.#transitionCallback = callback;
+  }
+
+  /**
+   * Set the command grammar for parsing commands
+   *
+   * @param {object} grammar
+   */
+  registerGrammar(grammar) {
+    if (typeof grammar !== 'object') throw new Error('Grammar must be an object');
+    if (typeof grammar['triggers'] !== 'object') throw new Error('Grammar triggers must be an object');
+    if (typeof grammar['actions'] !== 'object') throw new Error('Grammar actions must be an object');
+    this.#grammar = grammar;
   }
 
   /**
@@ -259,7 +272,7 @@ export class lenscriptScene {
     const triggerString = whenPart.replace("When ", "");
 
     // Validate trigger using the grammar
-    for (const [triggerKey, triggerExamples] of Object.entries(grammar.triggers)) {
+    for (const [triggerKey, triggerExamples] of Object.entries(this.#grammar.triggers)) {
       for (const example of triggerExamples) {
         const extractedParams = this.#matchAndExtractParams(triggerString, example);
         if (extractedParams) {
@@ -279,7 +292,7 @@ export class lenscriptScene {
       let actionName = '';
       let extractedParams = {};
 
-      for (const [possibleActionName, actionExamples] of Object.entries(grammar.actions)) {
+      for (const [possibleActionName, actionExamples] of Object.entries(this.#grammar.actions)) {
         for (const example of actionExamples) {
           extractedParams = this.#matchAndExtractParams(action, example);
           if (extractedParams) {
