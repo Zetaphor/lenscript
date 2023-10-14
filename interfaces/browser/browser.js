@@ -1,11 +1,6 @@
 import { lenscriptScene } from "../../lenscript.js";
 import { grammar } from "./grammar.js";
 
-const targetElement = document.getElementById('targetElement');
-const targetInput = document.getElementById('commandInput');
-let parsedCommands;
-
-
 class browserInterfaceProperties {
   constructor() {
     this.visible = true;
@@ -22,60 +17,61 @@ function objectTransitioned(name, prevState, nextState, state) {
   console.log(state);
 }
 
-const targetObjectName = 'test';
 const scene = new lenscriptScene();
 scene.registerGrammar(grammar);
 scene.registerTransitionCallback(objectTransitioned);
-scene.add(targetObjectName, new browserInterfaceProperties());
 
-let hovering = false;
+const scripts = [
+  "When started then play music 120, emit bubbles, tell bob hello",
+  "When touched then play music",
+  "When someone in vicinity then play music 100 high",
+  "When player in vicinity then play music",
+  "When dropped by player then play music",
+  "When told test by player then play music 110",
+  "When heard hello from Alice then tell Bob hi",
+  "When heard hello then tell Bob hi",
+]
 
-document.addEventListener('DOMContentLoaded', () => {
-  scene.trigger('start');
-  console.log(scene.parseCommand("When started then play music 120, emit bubbles, tell bob hello"));
-  console.log(scene.parseCommand("When touched then play music"));
-  console.log(scene.parseCommand("When someone in vicinity then play music 100 high"));
-  console.log(scene.parseCommand("When player in vicinity then play music"));
-  console.log(scene.parseCommand("When dropped by player then play music"));
-  console.log(scene.parseCommand("When told test by player then play music 110"));
-  console.log(scene.parseCommand("When heard hello from Alice then tell Bob hi"));
-  console.log(scene.parseCommand("When heard hello then tell Bob hi"));
-});
+console.log(scene.validateScripts(scripts));
 
-document.addEventListener('mousemove', () => {
-  // if (hovering) scene.trigger('hovering', targetObjectName);
-});
+const targetElements = document.querySelectorAll('.target');
 
-targetInput.addEventListener('input', event => {
+targetElements.forEach((element) => {
+  const name = element.getAttribute('data-name');
 
-});
+  scene.add(name, new browserInterfaceProperties());
 
-targetElement.addEventListener('dragstart', () => {
-  scene.trigger('grabStart', targetObjectName)
-});
+  scene.trigger('start', name);
 
-targetElement.addEventListener('drag', () => {
-  // scene.trigger('grabbing', targetObjectName)
-});
+  element.addEventListener('dragstart', () => {
+    scene.trigger('grabStart', name);
+  });
 
-targetElement.addEventListener('dragend', () => {
-  scene.trigger('grabEnd', targetObjectName)
-});
+  element.addEventListener('drag', () => {
+    // scene.trigger('grabbing', name);
+  });
 
-targetElement.addEventListener('mouseenter', () => {
-  hovering = true;
-  scene.trigger('hoverStart', targetObjectName)
-});
+  element.addEventListener('dragend', () => {
+    scene.trigger('grabEnd', name);
+  });
 
-targetElement.addEventListener('mouseleave', () => {
-  hovering = false;
-  scene.trigger('hoverEnd', targetObjectName)
-});
+  element.addEventListener('mouseenter', () => {
+    scene.trigger('hoverStart', name);
+  });
 
-targetElement.addEventListener('mousedown', () => {
-  scene.trigger('touchStart', targetObjectName)
-});
+  element.addEventListener('mouseover', (event) => {
+    scene.trigger('hovering', name);
+  });
 
-targetElement.addEventListener('mouseup', () => {
-  scene.trigger('touchEnd', targetObjectName)
+  element.addEventListener('mouseleave', () => {
+    scene.trigger('hoverEnd', name);
+  });
+
+  element.addEventListener('mousedown', () => {
+    scene.trigger('touchStart', name);
+  });
+
+  element.addEventListener('mouseup', () => {
+    scene.trigger('touchEnd', name);
+  });
 });
