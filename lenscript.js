@@ -172,7 +172,6 @@ export class lenscriptScene {
         this.#actionCallback(name, script.actions[i].actionName, script.actions[i].params);
       }
     }
-    // console.log('Received trigger', name, params);
   }
 
   /**
