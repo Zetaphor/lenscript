@@ -3,8 +3,6 @@ export class lenscriptObject {
   #currentState = 'default';
   #states = {};
   #parentScene = null;
-  #scriptData = [];
-  #activeTriggers = [];
   constructor(parent, name, defaultProperties) {
     if (!parent) throw new Error('Object must have a parent');
     if (!name) throw new Error('Object must have a name');
@@ -47,28 +45,6 @@ export class lenscriptObject {
   property(name, value = null) {
     if (value === null) return this.#states[this.#currentState][name] || '';
     else this.#states[this.#currentState][name] = value;
-  }
-
-  /**
-   * Set an objects scripts
-   *
-   * @param {object} data object containing the scripts triggers and actions
-   */
-  setScripts(data) {
-    if (!data) throw new Error('Missing script data');
-    if (!data.triggers) throw new Error('Missing triggers');
-    if (!data.scripts) throw new Error('Missing scripts');
-    this.#scriptData = data.scripts;
-    this.#activeTriggers = data.triggers;
-  }
-
-  /**
-   * Get the objects scripts
-   *
-   * @returns {object} the objects scripts
-  */
-  scripts() {
-    return this.#scriptData;
   }
 
   /**
@@ -191,7 +167,11 @@ export class lenscriptScene {
     if (!name) throw new Error('Object must have a name');
     if (!properties) throw new Error('Object must have properties');
     if (this.#objects[name]) throw new Error(`Object ${name} already exists`);
-    this.#objects[name] = new lenscriptObject(this, name, properties);
+    this.#objects[name] = {
+      object: new lenscriptObject(this, name, properties),
+      activeTriggers: [],
+      scripts: []
+    }
   }
 
   /**
@@ -275,15 +255,14 @@ export class lenscriptScene {
    */
   setScripts(name, scripts) {
     if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
-    this.#objects[name].scripts(scripts);
     let activeTriggers = [];
     let validScripts = [];
     for (let i = 0; i < scripts.length; i++) {
       let script = this.#parseCommand(scripts[i]);
       if (!script.isValid) continue;
       let actionsValid = true;
-      for (let j = 0; j < actions.length; j++) {
-        if (actions[j].isValid) continue;
+      for (let j = 0; j < script.actions.length; j++) {
+        if (script.actions[j].isValid) continue;
         actionsValid = false;
         break;
       }
@@ -291,7 +270,8 @@ export class lenscriptScene {
       activeTriggers.push(script.trigger);
       validScripts.push(script);
     }
-    this.#objects[name].setScripts({ triggers: activeTriggers, scripts: validScripts });
+    this.#objects[name].activeTriggers = activeTriggers;
+    this.#objects[name].scripts = validScripts;
   }
 
   /**
