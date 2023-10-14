@@ -264,7 +264,13 @@ export class lenscriptScene {
   object(name) {
     this.#validateScene();
     if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
-    return this.#objects[name];
+    return {
+      name: name,
+      state: this.#objects[name].object.state(),
+      properties: this.#objects[name].object.properties(),
+      variables: this.#objects[name].object.variables(),
+      scripts: this.#objects[name].scripts,
+    }
   }
 
   /**
@@ -273,7 +279,9 @@ export class lenscriptScene {
    */
   objects() {
     this.#validateScene();
-    return this.#objects;
+    return Object.values(this.#objects).map(object => {
+      return this.object(object.name);
+    });
   }
 
   /**
