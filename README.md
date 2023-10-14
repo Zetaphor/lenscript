@@ -1,10 +1,8 @@
 # Lenscript
 
-This is an experimental project implementing a version of the scripting language from Anyland in Javascript.
+Lenscript is a scripting language inspired by the natural language state-machine based scripting system from Anyland.
 
 http://anyland.com/scripting/
-
-The long-term goal of this project is to enable the use of this language on Overte, and possibly other platforms.
 
 ## Why is it called Lenscript?
 
@@ -12,21 +10,16 @@ Anyland was developed by Philipp Lenssen so the name is an homage to him for the
 
 ## Architecture Overview
 
-Lenscript operates on a scene graph made up of state-managed named objects. Each of these named objects has named multiple states, which are collections of different types of properties: interface properties, trigger properties, and user-defined variables. The scene graph can also store user-defined variables which can be read by all child objects.
-
 **Hierarchy:**
   - LenscriptScene
     - User-defined variables
     - LenscriptObject
       - User-defined variables
-      - Trigger Properties (e.g., Touching, Hovering)
+      - Trigger Properties (Used to compute trigger reactions, ie: touchable, moveable)
       - Named States
-        - Properties
-          - Interface Properties (e.g., Color, Position, Scale)
+        - Interface Properties (e.g., Color, Position, Scale)
 
-### Goal:
-
-The primary objective is to isolate the internal behavior of Lenscript from the specifics of the environment it operates in. This ensures that Lenscript scripts work the same way internally, regardless of the external host engine. Any differences arise solely due to how the host engine interacts with Lenscript's property mutations.
+Lenscript uses a scene graph which contains objects. Each object can have one or more states, with only one state active at a time. Each state contains interface properties which are used by interfaces to represent the objects state. Triggers are used to mutate an objects interface properties and to transition states.
 
 ## Interfaces
 
@@ -80,7 +73,7 @@ lenscriptObjectProperties {
 
 ### Property Types:
 
-- **Interface Properties**: These are properties that signal changes to the external interface. Interface properties are defined on the current state, and can be changed by the result of triggers or a state transition. Examples include browser, game engine, or virtual world platforms.
+- **Interface Properties**: These are properties that signal changes to the external interface. Interface properties are defined on the current state, and can be changed by the result of triggers or a state transition.
 
 - **Trigger Properties**: These are properties that respond to events or changes coming from the external interface. Trigger properties are defined on the object separate from the state and thus are not affected by state changes. For instance, they are used to detect when an object is hovered over or clicked.
 
