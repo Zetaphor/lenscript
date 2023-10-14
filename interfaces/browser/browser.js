@@ -26,7 +26,7 @@ const targetObjectName = 'test';
 const scene = new lenscriptScene();
 scene.registerGrammar(grammar);
 scene.registerTransitionCallback(objectTransitioned);
-scene.add(targetObjectName);
+scene.add(targetObjectName, new browserInterfaceProperties());
 
 let hovering = false;
 
