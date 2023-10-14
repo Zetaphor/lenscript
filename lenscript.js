@@ -89,15 +89,19 @@ export class lenscriptScene {
    *
    * @param {string} name
    * @param  {...any} params
+   * @throws {Error} if the object does not exist
+   * @throws {Error} if the trigger does not exist
    */
-  trigger(name, action, ...params) {
+  trigger(name, trigger, ...params) {
     this.#validateScene();
+    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
+    if (!this.#grammar.triggers[trigger]) throw new Error(`Trigger ${trigger} does not exist`);
+    const objectTriggers = this.objectTriggers(name);
+    if (!objectTriggers.includes(trigger)) throw new Error(`Object ${name} does not have trigger ${trigger}`);
     const sceneObject = this.object(name);
-    if (sceneObject.activeTriggers.includes(action)) {
-      const script = sceneObject.scripts.find(script => script.trigger === action);
+    const script = sceneObject.parsedScripts.find(script => script.trigger === trigger);
       for (let i = 0; i < script.actions.length; i++) {
-        this.#actionCallback(name, script.actions[i].actionName, script.actions[i].params);
-      }
+      this.#actionCallback(name, script.actions[i].actionName, params);
     }
   }
 
@@ -190,6 +194,19 @@ export class lenscriptScene {
     this.#validateScene();
     if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
     return this.#objects[name].scripts;
+  }
+
+  /**
+   * Get all of the triggers for an object
+   *
+   * @param {string} name
+   * @returns {array<string>} an array of triggers
+   * @throws {Error} if the object does not exist
+   */
+  objectTriggers(name) {
+    this.#validateScene();
+    if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
+    return this.#objects[name].activeTriggers;
   }
 
   /**
