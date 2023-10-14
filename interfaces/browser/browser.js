@@ -17,8 +17,8 @@ function objectTransitioned(name, prevState, nextState, state) {
   console.log(state);
 }
 
-function actionCallback(name, params) {
-  console.log(`Action ${name} with params`, params);
+function actionCallback(objectName, actionName, params) {
+  console.log(`Object ${objectName} triggered action ${actionName} with params`, params);
 }
 
 const scene = new lenscriptScene();
@@ -51,34 +51,34 @@ targetElements.forEach((element) => {
   scene.trigger(name, 'started');
 
   element.addEventListener('dragstart', () => {
-    scene.trigger('grabStart', name);
+    scene.trigger(name, 'grabStart');
   });
 
   element.addEventListener('drag', () => {
-    // scene.trigger('grabbing', name);
+    // scene.trigger(name, 'grabbing');
   });
 
   element.addEventListener('dragend', () => {
-    scene.trigger('grabEnd', name);
+    scene.trigger(name, 'grabEnd');
   });
 
   element.addEventListener('mouseenter', () => {
-    scene.trigger('hoverStart', name);
+    scene.trigger(name, 'hoverStart');
   });
 
   element.addEventListener('mouseover', (event) => {
-    scene.trigger('hovering', name);
+    scene.trigger(name, 'hovering');
   });
 
   element.addEventListener('mouseleave', () => {
-    scene.trigger('hoverEnd', name);
+    scene.trigger(name, 'hoverEnd');
   });
 
   element.addEventListener('mousedown', () => {
-    scene.trigger('touchStart', name);
+    scene.trigger(name, 'touchStart');
   });
 
   element.addEventListener('mouseup', () => {
-    scene.trigger('touchEnd', name);
+    scene.trigger(name, 'touchEnd');
   });
 });

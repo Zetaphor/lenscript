@@ -169,7 +169,7 @@ export class lenscriptScene {
     if (sceneObject.activeTriggers.includes(action)) {
       const script = sceneObject.scripts.find(script => script.trigger === action);
       for (let i = 0; i < script.actions.length; i++) {
-        this.#actionCallback(script.actions[i].actionName, script.actions[i].params);
+        this.#actionCallback(name, script.actions[i].actionName, script.actions[i].params);
       }
     }
     // console.log('Received trigger', name, params);
