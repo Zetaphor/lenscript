@@ -12,73 +12,111 @@ class browserInterfaceProperties {
   }
 }
 
+let targetElements = null;
+let scene = null;
+
+/**
+ * Called from the scene when an object has changed states
+ * Registered in the scene from setupScene()
+ *
+ * @param {string} name the name of the object
+ * @param {string} prevState the previous state
+ * @param {string} nextState the new state
+ * @param {object} state the new state properties
+ */
 function objectTransitioned(name, prevState, nextState, state) {
   console.log(`Object ${name} transitioned from ${prevState} to ${nextState}`);
   console.log(state);
 }
 
+/**
+ * Called from the scene when an action is triggered
+ * Registered in the scene from setupScene()
+ *
+ * @param {string} objectName the name of the object
+ * @param {string} actionName the name of the action
+ * @param {object} params action parameters
+ */
 function actionCallback(objectName, actionName, params) {
   console.log(`Object ${objectName} triggered action ${actionName} with params`, params);
+  const targetElement = document.querySelector(`[data-name="${objectName}"]`);
 }
 
-const scene = new lenscriptScene();
-scene.registerGrammar(grammar);
-scene.registerTransitionCallback(objectTransitioned);
-scene.registerActionCallback(actionCallback);
-
-const scripts = [
-  "When started then play music 120, emit bubbles, tell bob hello",
-  "When touched then play music",
-  "When someone in vicinity then play music 100 high",
-  "When player in vicinity then play music",
-  "When dropped by player then play music",
-  "When told test by player then play music 110",
-  "When heard hello from Alice then tell Bob hi",
-  "When heard hello then tell Bob hi",
-]
-
-console.log(scene.validateScripts(scripts));
-
-const targetElements = document.querySelectorAll('.target');
-
-targetElements.forEach((element) => {
-  const name = element.getAttribute('data-name');
-
-  scene.add(name, new browserInterfaceProperties());
-
-  scene.setScripts(name, scripts);
-
-  scene.trigger(name, 'started');
-
-  element.addEventListener('dragstart', () => {
-    scene.trigger(name, 'grabStart');
-  });
-
-  element.addEventListener('drag', () => {
-    // scene.trigger(name, 'grabbing');
-  });
-
-  element.addEventListener('dragend', () => {
-    scene.trigger(name, 'grabEnd');
-  });
-
-  element.addEventListener('mouseenter', () => {
-    scene.trigger(name, 'hoverStart');
-  });
-
-  element.addEventListener('mouseover', (event) => {
-    scene.trigger(name, 'hovering');
-  });
-
-  element.addEventListener('mouseleave', () => {
-    scene.trigger(name, 'hoverEnd');
-  });
-
-  element.addEventListener('mousedown', () => {
-    scene.trigger(name, 'touchStart');
-  });
-
-  element.addEventListener('mouseup', () => {
-    scene.trigger(name, 'touchEnd');
-  });
+document.addEventListener('DOMContentLoaded', () => {
+  setupScene();
+  setupTargetElements();
 });
+
+/**
+ * Create the scene and register the grammar, transition callback, and action callback
+ */
+function setupScene() {
+  scene = new lenscriptScene();
+  scene.registerGrammar(grammar);
+  scene.registerTransitionCallback(objectTransitioned);
+  scene.registerActionCallback(actionCallback);
+}
+
+/**
+ * Add the target elements to the scene and bind the browser-specific action triggers
+ */
+function setupTargetElements() {
+  targetElements = document.querySelectorAll('.test-object');
+
+  targetElements.forEach((element) => {
+    const name = element.getAttribute('data-name');
+
+    scene.add(name, new browserInterfaceProperties());
+
+    scene.setScripts(name, scripts);
+
+    scene.trigger(name, 'started');
+
+    element.addEventListener('dragstart', () => {
+      scene.trigger(name, 'grabStart');
+    });
+
+    element.addEventListener('drag', () => {
+      // scene.trigger(name, 'grabbing');
+    });
+
+    element.addEventListener('dragend', () => {
+      scene.trigger(name, 'grabEnd');
+    });
+
+    element.addEventListener('mouseenter', () => {
+      scene.trigger(name, 'hoverStart');
+    });
+
+    element.addEventListener('mouseover', (event) => {
+      scene.trigger(name, 'hovering');
+    });
+
+    element.addEventListener('mouseleave', () => {
+      scene.trigger(name, 'hoverEnd');
+    });
+
+    element.addEventListener('mousedown', () => {
+      scene.trigger(name, 'touchStart');
+    });
+
+    element.addEventListener('mouseup', () => {
+      scene.trigger(name, 'touchEnd');
+    });
+  });
+}
+
+const actions = {
+  play: function (soundName, volume = 100) {
+    console.log('play', soundName, volume);
+  }
+}
+
+/**************************************************/
+/*              UI Specific code                  */
+/*                                                */
+/* Everything below this point is for the HTML UI */
+/* This like updating the output logs, etc.       */
+/**************************************************/
+
+
