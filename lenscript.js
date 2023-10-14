@@ -209,7 +209,7 @@ export class lenscriptScene {
    * Get a single object from the scene
    *
    * @param {string} name
-   * @returns {lenscriptObject}
+   * @returns {lenscriptObject} the scene object
    */
   object(name) {
     this.#validateScene();
@@ -219,7 +219,7 @@ export class lenscriptScene {
 
   /**
    * Get all of the objects in the scene
-   * @returns {Array<lenscriptObject>}
+   * @returns {array<lenscriptObject>} the scene objects
    */
   objects() {
     this.#validateScene();
@@ -230,7 +230,7 @@ export class lenscriptScene {
    * Check if a given command string matches a pattern and returns the extracted parameters
    * @param {string} commandString
    * @param {string} pattern
-   * @returns
+   * @returns {object} object containing the extracted parameters
    */
   #matchAndExtractParams(commandString, pattern) {
     const patternTokens = pattern.split(" ");
@@ -260,7 +260,7 @@ export class lenscriptScene {
   /**
    * Parse a command string into a trigger and actions
    * @param {string} command
-   * @returns {object}
+   * @returns {object} { isValid: boolean, trigger: string, triggerParams: object, actions: array }
    */
   parseCommand(command) {
     if (!command) return null;
