@@ -194,6 +194,7 @@ export class lenscriptScene {
 
   /**
    * Trigger an action
+   *
    * @param {string} name
    * @param  {...any} params
    */
@@ -232,6 +233,7 @@ export class lenscriptScene {
 
   /**
    * Remove an object from the scene
+   *
    * @param {string} name
    * @throws {Error} if the object does not exist
   */
@@ -242,10 +244,10 @@ export class lenscriptScene {
   }
 
   /**
-   * Get or set a variable value. If no value is provided the value of the variable is returned
+   * Get or set a global scene variable value. If no value is provided the value of the variable is returned
    * Returns an empty string if the variable is undefined
    *
-   * @param {string} name
+   * @param {string} name the name of the scene variable
    * @param {string} value optional value, if not provided the value of the variable is returned
    */
   variable(name, value = null) {
@@ -275,6 +277,7 @@ export class lenscriptScene {
 
   /**
    * Get all of the objects in the scene
+   *
    * @returns {array<lenscriptObject>} the scene objects
    */
   objects() {
