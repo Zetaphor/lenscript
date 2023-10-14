@@ -6,14 +6,6 @@ export const grammar = {
     triggered: [
       "triggered"
     ],
-    inVicinity: [
-      "someone in vicinity",
-      "[target] in vicinity"
-    ],
-    nearby: [
-      "someone nearby",
-      "[target] nearby"
-    ],
     touchStart: [
       "touch started",
       "touch started by [target]"
@@ -58,11 +50,9 @@ export const grammar = {
       "heard [value]",
       "heard [value] from [target]"
     ],
-    destroyed: [
-      "destroyed"
-    ],
     remembered: [
-      "remembered [value]"
+      "remembered [name]",
+      "remembered [name] [value]"
     ]
   },
   actions: {
@@ -72,7 +62,6 @@ export const grammar = {
     play: [
       "play [value]",
       "play [value] [volume]",
-      "play [value] [volume] [pitch]"
     ],
     loop: [
       "loop [value]"
@@ -81,7 +70,7 @@ export const grammar = {
       "end loop"
     ],
     toggle: [
-      "toggle [value]"
+      "toggle [target]"
     ],
     visibility: [
       "set visibility [value]"
@@ -106,7 +95,7 @@ export const grammar = {
       "tell [target] [value]"
     ],
     remember: [
-      "remember [value] [value]"
+      "remember [name] [value]"
     ]
   }
 }

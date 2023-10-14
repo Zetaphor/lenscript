@@ -1,5 +1,5 @@
 import { lenscriptScene } from "../../lenscript.js";
-import { grammar } from "./grammar.js";
+import { grammar } from "./browser_grammar.js";
 
 class browserInterfaceProperties {
   constructor() {
