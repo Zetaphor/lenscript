@@ -1,3 +1,5 @@
+import { grammar } from './grammar.js';
+
 class lenscriptInterfaceProperties {
   constructor() {
     this.visible = true;
@@ -24,6 +26,7 @@ export class lenscriptObject {
   #triggerProperties = new lenscriptTriggerProperties();
   #states = { 'default': new lenscriptInterfaceProperties() };
   #parentScene = null;
+  #triggers = {};
 
   constructor(parent, name) {
     this.name = name;
@@ -196,50 +199,98 @@ export class lenscriptScene {
   objects() {
     return this.#objects;
   }
-}
 
-/**
- * Parse a single command into its components
- *
- * @param {string} command The command string to parse
- * @returns {object} An object containing the components of the command
- */
-export function parseCommand(command) {
-  const result = {
-    trigger: null,
-    triggerParams: [],
-    actions: []
-  };
+  /**
+   * Check if a given command string matches a pattern and returns the extracted parameters
+   * @param {string} commandString
+   * @param {string} pattern
+   * @returns
+   */
+  #matchAndExtractParams(commandString, pattern) {
+    const patternTokens = pattern.split(" ");
+    const commandTokens = commandString.split(" ");
 
-  // Split the command into "When ... then ..." parts
-  const [whenPart, thenPart] = command.split(" then ");
+    let commandIndex = 0;
+    const params = {};
 
-  // Extract the trigger and its parameters after "When"
-  const [trigger, ...triggerParams] = whenPart.replace("When ", "").split(" ");
-  result.trigger = trigger.trim();
-  result.triggerParams = triggerParams.map(param => param.trim());
+    for (const token of patternTokens) {
+      if (token.startsWith("[")) { // Variable placeholder
+        if (commandIndex >= commandTokens.length) return null;
+        const paramName = token.substring(1, token.length - 1); // Remove brackets
+        params[paramName] = commandTokens[commandIndex];
+        commandIndex++;
+      } else { // Fixed word
+        if (commandTokens[commandIndex] !== token) return null;
+        commandIndex++;
+      }
+    }
 
-  // Split actions by commas
-  const actions = thenPart.split(", ").map(action => {
-    const [actionName, ...params] = action.split(" ");
-    return {
-      actionName: actionName.trim(),
-      params: params.map(param => param.trim())
+    // Ensure we've consumed all parameters
+    if (commandIndex !== commandTokens.length) return null;
+
+    return params;
+  }
+
+  /**
+   * Parse a command string into a trigger and actions
+   * @param {string} command
+   * @returns {object}
+   */
+  parseCommand(command) {
+    const result = {
+      isValid: false,
+      trigger: null,
+      triggerParams: {},
+      actions: []
     };
-  });
 
-  result.actions = actions;
+    // Split the command into "When ... then ..." parts
+    const [whenPart, thenPart] = command.split(" then ");
+    const triggerString = whenPart.replace("When ", "");
 
-  return result;
+    // Validate trigger using the grammar
+    for (const [triggerKey, triggerExamples] of Object.entries(grammar.triggers)) {
+      for (const example of triggerExamples) {
+        const extractedParams = this.#matchAndExtractParams(triggerString, example);
+        if (extractedParams) {
+          result.isValid = true;
+          result.trigger = triggerKey;
+          result.triggerParams = extractedParams;
+          break;
+        }
+      }
+
+      if (result.isValid) break;
+    }
+
+    // Validate actions using the grammar
+    const actions = thenPart.split(", ").map(action => {
+      let isValid = false;
+      let actionName = '';
+      let extractedParams = {};
+
+      for (const [possibleActionName, actionExamples] of Object.entries(grammar.actions)) {
+        for (const example of actionExamples) {
+          extractedParams = this.#matchAndExtractParams(action, example);
+          if (extractedParams) {
+            isValid = true;
+            actionName = possibleActionName;
+            break;
+          }
+        }
+
+        if (isValid) break;
+      }
+
+      return {
+        isValid,
+        actionName,
+        params: extractedParams
+      };
+    });
+
+    result.actions = actions;
+
+    return result;
+  }
 }
-
-/**
- * Parse multiple commands into a structured format
- *
- * @param {Array<string>} commands An array of command strings
- * @returns {Array<object>} An array of parsed commands
- */
-export function parseCommands(commands) {
-  return commands.map(command => parseCommand(command));
-}
-

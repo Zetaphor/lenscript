@@ -56,7 +56,7 @@ export const grammar = {
     ],
     heard: [
       "heard [value]",
-      "heard from [target] [value]"
+      "heard [value] from [target]"
     ],
     destroyed: [
       "destroyed"
@@ -71,7 +71,8 @@ export const grammar = {
     ],
     play: [
       "play [value]",
-      "play [value] [value]"
+      "play [value] [volume]",
+      "play [value] [volume] [pitch]"
     ],
     loop: [
       "loop [value]"
