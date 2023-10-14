@@ -3,29 +3,31 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Command Autocomplete and Tester</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+  <title>Lenscript Browser Demo</title>
+  <link rel="stylesheet" href="index.css">
 </head>
 
-<body class="p-6">
-  <div class="flex flex-col">
-    <div class="mb-4">
-      <div id="targetElement" draggable="true" class="w-10 h-10 bg-blue-500 hover:bg-red-500 rounded-md mr-2">Test</div>
+<body>
+  <div class="container">
+    <div class="box">
+      <div data-name="target1" draggable="true" class="target">Target 1</div>
     </div>
-    <label for="commandInput" class="mb-2 text-lg">Type a command:</label>
-    <textarea type="text" id="commandInput" placeholder="Type a command..."
-      class="mb-2 p-2 border rounded h-full block">
-      When shaken then play doorbell
-      When touched then play doorbell with high-pitch 120% volume
-      When shaken then play laughter, emit bubbles
-      When starts then become next in 1s
-      When starts then become 3 in 1s
-      When touches red key 1 then tell open
-      When walked into then send one nearby to buildtown
-    </textarea>
-    <ul id="suggestions" class="mb-4 list-inside list-disc">
-    </ul>
-    <button id="testCommands" class="p-2 bg-blue-500 text-white rounded">Test Commands</button>
+    <div class="box">
+      <div data-name="target2" draggable="true" class="target">Target 2</div>
+    </div>
+    <div class="box">
+      <div data-name="target3" draggable="true" class="target">Target 3</div>
+    </div>
+
+    <!-- Command Input -->
+    <label for="commandInput" class="label">Type a command:</label>
+    <textarea id="commandInput" class="command-input"></textarea>
+
+    <!-- Suggestions List -->
+    <ul id="suggestions" class="suggestions-list"></ul>
+
+    <!-- Test Commands Button -->
+    <button id="testCommands" class="test-button">Test Commands</button>
   </div>
 
   <script src="./browser.js" type="module"></script>

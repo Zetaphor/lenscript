@@ -1,0 +1,52 @@
+/* Container style */
+.container {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Individual draggable targets */
+.target {
+  padding: 1.25rem;
+  border: 2px solid black;
+  user-select: none;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  margin-right: 0.5rem;
+  display: inline-block;
+}
+
+/* Margin bottom for each box */
+.box {
+  margin-bottom: 1rem;
+}
+
+/* Label style */
+.label {
+  margin-bottom: 0.5rem;
+  font-size: 1.125rem;
+}
+
+/* Command input style */
+.command-input {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+  height: 300px;
+}
+
+/* Suggestions list style */
+.suggestions-list {
+  margin-bottom: 1rem;
+  list-style-type: disc;
+  list-style-position: inside;
+}
+
+/* Test Commands button style */
+.test-button {
+  padding: 0.5rem;
+  background-color: #1d72b8;
+  color: white;
+  border-radius: 0.25rem;
+}
