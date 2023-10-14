@@ -1,25 +1,3 @@
-import { grammar } from './grammar.js';
-
-class lenscriptInterfaceProperties {
-  constructor() {
-    this.visible = true;
-    this.position = { x: 0, y: 0, z: 0 };
-    this.rotation = { x: 0, y: 0, z: 0, w: 1 };
-    this.color = { r: 0, g: 0, b: 0 };
-    this.scale = { x: 1, y: 1, z: 1 };
-    this.opacity = 1;
-  }
-}
-
-class lenscriptTriggerProperties {
-  constructor() {
-    this.touching = false;
-    this.hovering = false;
-    this.waitingForTouches = false;
-    this.waitingForTells = false;
-  }
-}
-
 export class lenscriptObject {
   #variables = {};
   #currentState = 'default';
@@ -33,6 +11,7 @@ export class lenscriptObject {
 
     this.name = name;
     this.#parentScene = parent;
+    this.addState('default', defaultProperties);
   }
 
   /**
@@ -67,6 +46,17 @@ export class lenscriptObject {
   property(name, value = null) {
     if (value === null) return this.#states[this.#currentState][name] || '';
     else this.#states[this.#currentState][name] = value;
+  }
+
+  /**
+   * Get or set an objects scripts. If no value is provided the current scripts are returned
+   *
+   * @param {array} value
+   * @returns {array} the objects scripts
+   */
+  scripts(value = null) {
+    if (value === null) return this.#scriptData;
+    else this.#scriptData = value;
   }
 
   /**
@@ -138,7 +128,7 @@ export class lenscriptScene {
    */
   objectStateTransitioned(name, prevName, newName, state) {
     if (!this.#transitionCallback) throw new Error('Object must have a transition callback');
-      this.#transitionCallback(name, prevName, newName, state);
+    this.#transitionCallback(name, prevName, newName, state);
   }
 
   /**
@@ -260,6 +250,7 @@ export class lenscriptScene {
    * @returns {object}
    */
   parseCommand(command) {
+    if (!command) return null;
     const result = {
       isValid: false,
       trigger: null,
