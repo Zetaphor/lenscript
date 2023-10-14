@@ -17,9 +17,14 @@ function objectTransitioned(name, prevState, nextState, state) {
   console.log(state);
 }
 
+function actionCallback(name, params) {
+  console.log(`Action ${name} with params`, params);
+}
+
 const scene = new lenscriptScene();
 scene.registerGrammar(grammar);
 scene.registerTransitionCallback(objectTransitioned);
+scene.registerActionCallback(actionCallback);
 
 const scripts = [
   "When started then play music 120, emit bubbles, tell bob hello",
@@ -41,7 +46,9 @@ targetElements.forEach((element) => {
 
   scene.add(name, new browserInterfaceProperties());
 
-  scene.trigger('start', name);
+  scene.setScripts(name, scripts);
+
+  scene.trigger(name, 'started');
 
   element.addEventListener('dragstart', () => {
     scene.trigger('grabStart', name);
