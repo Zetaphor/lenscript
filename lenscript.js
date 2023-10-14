@@ -103,10 +103,12 @@ export class lenscriptScene {
   #variables = {};
   #objects = {};
   #transitionCallback = null;
+  #actionCallback = null;
   #grammar = null
 
   #validateScene() {
     if (!this.#transitionCallback) throw new Error('Scene must have a transition callback');
+    if (!this.#actionCallback) throw new Error('Scene must have an action callback');
     if (!this.#grammar) throw new Error('Scene must have a grammar');
   }
 
@@ -135,6 +137,16 @@ export class lenscriptScene {
   }
 
   /**
+   * Set the action callback function
+   *
+   * @param {function} callback
+   */
+  registerActionCallback(callback) {
+    if (typeof callback !== 'function') throw new Error('Action callback must be a function');
+    this.#actionCallback = callback;
+  }
+
+  /**
    * Set the command grammar for parsing commands
    *
    * @param {object} grammar
@@ -151,9 +163,16 @@ export class lenscriptScene {
    * @param {*} name
    * @param  {...any} params
    */
-  trigger(name, ...params) {
+  trigger(name, action, ...params) {
     this.#validateScene();
-    console.log('Received trigger', name, params);
+    const sceneObject = this.object(name);
+    if (sceneObject.activeTriggers.includes(action)) {
+      const script = sceneObject.scripts.find(script => script.trigger === action);
+      for (let i = 0; i < script.actions.length; i++) {
+        this.#actionCallback(script.actions[i].actionName, script.actions[i].params);
+      }
+    }
+    // console.log('Received trigger', name, params);
   }
 
   /**
