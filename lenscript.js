@@ -84,7 +84,7 @@ export class lenscriptObject {
    */
   setState(name) {
     if (!this.#states[name]) throw new Error(`State ${name} does not exist`);
-    this.#parentScene.objectStateTransitioned(this.name, this.#currentState, name, this.#states[name]);
+    this.#parentScene._objectStateTransitioned(this.name, this.#currentState, name, this.#states[name]);
     this.#currentState = name;
   }
 
@@ -97,7 +97,7 @@ export class lenscriptObject {
   addState(name, properties = {}) {
     if (!name) throw new Error('State must have a name');
     if (this.#states[name]) throw new Error(`State ${name} already exists`);
-    this.#states[name] = new lenscriptObjectProperties(properties);
+    this.#states[name] = properties;
   }
 
   /**
@@ -117,6 +117,11 @@ export class lenscriptScene {
   #transitionCallback = null;
   #grammar = null
 
+  #validateScene() {
+    if (!this.#transitionCallback) throw new Error('Scene must have a transition callback');
+    if (!this.#grammar) throw new Error('Scene must have a grammar');
+  }
+
   /**
    * Trigger the transition callback function when a childs state changes
    * This should only be called from a child object
@@ -126,8 +131,8 @@ export class lenscriptScene {
    * @param {string} newName the new state name
    * @param {lenscriptObjectProperties} state the new state properties
    */
-  objectStateTransitioned(name, prevName, newName, state) {
-    if (!this.#transitionCallback) throw new Error('Object must have a transition callback');
+  _objectStateTransitioned(name, prevName, newName, state) {
+    if (!this.#transitionCallback) throw new Error('Scene must have a transition callback');
     this.#transitionCallback(name, prevName, newName, state);
   }
 
@@ -159,6 +164,7 @@ export class lenscriptScene {
    * @param  {...any} params
    */
   trigger(name, ...params) {
+    this.#validateScene();
     console.log('Received trigger', name, params);
   }
 
@@ -166,11 +172,14 @@ export class lenscriptScene {
    * Add an object to the scene
    *
    * @param {string} name
-   * @param {lenscriptObjectProperties} properties
+   * @param {object} properties
    */
-  add(name) {
+  add(name, properties) {
+    this.#validateScene();
     if (!name) throw new Error('Object must have a name');
-    this.#objects[name] = new lenscriptObject(this, name);
+    if (!properties) throw new Error('Object must have properties');
+    if (this.#objects[name]) throw new Error(`Object ${name} already exists`);
+    this.#objects[name] = new lenscriptObject(this, name, properties);
   }
 
   /**
@@ -178,6 +187,7 @@ export class lenscriptScene {
    * @param {string} name
   */
   remove(name) {
+    this.#validateScene();
     if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
     delete this.#objects[name];
   }
@@ -190,6 +200,7 @@ export class lenscriptScene {
    * @param {string} value optional value, if not provided the value of the variable is returned
    */
   variable(name, value = null) {
+    this.#validateScene();
     if (value === null) return this.#variables[name] || '';
     else this.#variables[name] = value.toString();
   }
@@ -201,6 +212,7 @@ export class lenscriptScene {
    * @returns {lenscriptObject}
    */
   object(name) {
+    this.#validateScene();
     if (!this.#objects[name]) throw new Error(`Object ${name} does not exist`);
     return this.#objects[name];
   }
@@ -210,6 +222,7 @@ export class lenscriptScene {
    * @returns {Array<lenscriptObject>}
    */
   objects() {
+    this.#validateScene();
     return this.#objects;
   }
 
