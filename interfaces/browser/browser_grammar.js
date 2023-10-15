@@ -1,5 +1,13 @@
 export const grammar = {
   triggers: {
+    remembered: [
+      "remembered [name]",
+      "remembered [name] [value]"
+    ],
+    saved: [
+      "saved [name]",
+      "saved [name] [value]"
+    ],
     started: [
       "started"
     ],
@@ -49,31 +57,23 @@ export const grammar = {
     heard: [
       "heard [value]",
       "heard [value] from [target]"
-    ],
-    remembered: [
-      "remembered [name]",
-      "remembered [name] [value]"
     ]
   },
   actions: {
-    play: [
-      "play [value]",
-      "play [value] [volume]",
+    become: [
+      "become [value]"
     ],
-    loop: [
-      "loop [value]"
+    remember: [
+      "remember [name] [value]"
     ],
-    endLoop: [
-      "end loop"
+    save: [
+      "save [name] [value]"
     ],
     visibility: [
       "set visibility [value]"
     ],
     tell: [
       "tell [target] [value]"
-    ],
-    remember: [
-      "remember [name] [value]"
     ],
     bgColor: [
       "set bg color [value]",
