@@ -134,6 +134,11 @@ function setupTargetElements() {
   });
 }
 
+/**
+ * Get the CSS transforms for the actions so they can be applied to the target element
+ * @param {HTMLElement} element
+ * @returns
+ */
 function getCssTransform(element) {
   const computedStyle = window.getComputedStyle(element);
   const transformValue = computedStyle.getPropertyValue("transform");
@@ -141,9 +146,6 @@ function getCssTransform(element) {
   const scaleX = transformMatrix.a;
   const scaleY = transformMatrix.d;
   const rotation = Math.atan2(transformMatrix.b, transformMatrix.a) * (180 / Math.PI);
-  console.log("Scale X:", scaleX);
-  console.log("Scale Y:", scaleY);
-  console.log("Rotation (degrees):", rotation);
   return scaleX, scaleY, rotation
 }
 
@@ -191,7 +193,7 @@ const actions = {
 /*              UI Specific code                  */
 /*                                                */
 /* Everything below this point is for the HTML UI */
-/* This like updating the output logs, etc.       */
+/* ie: updating the output logs, dropdown, etc.   */
 /**************************************************/
 
 function addActionLog(type, message) {
