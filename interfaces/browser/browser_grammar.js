@@ -89,6 +89,21 @@ export const grammar = {
     ],
     remember: [
       "remember [name] [value]"
+    ],
+    bgColor: [
+      "set bg color [value]"
+    ],
+    textColor: [
+      "set text color [value]"
+    ],
+    rotation: [
+      "set rotation [value]"
+    ],
+    scale: [
+      "set scale [value]"
+    ],
+    opacity: [
+      "set opacity [value]"
     ]
   }
 }
