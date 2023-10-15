@@ -53,10 +53,6 @@ export const grammar = {
     grabEnd: [
       "dropped",
       "dropped by [target]"
-    ],
-    heard: [
-      "heard [value]",
-      "heard [value] from [target]"
     ]
   },
   actions: {
