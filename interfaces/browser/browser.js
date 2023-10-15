@@ -31,7 +31,6 @@ function objectStateUpdate(name, details, state) {
     addActionLog('property', `Object ${name} property ${details.property} changed from ${JSON.stringify(details.prevValue)} to ${JSON.stringify(details.newValue)}`);
   }
   const targetElement = document.querySelector(`[data-name="${name}"]`);
-  console.log(name, details, state);
   targetElement.style.visibility = state.visible ? 'visible' : 'hidden';
   targetElement.style.opacity = state.opacity;
   if (typeof state.bgColor.r !== 'undefined') {
@@ -180,16 +179,21 @@ function setupTargetElements() {
 /* ie: updating the output logs, dropdown, etc.   */
 /**************************************************/
 
-function addActionLog(type, message) {
-  document.querySelector('.action-log').innerHTML += `<p class="log-${type}">${message}</p>`;
-}
-
 const textarea = document.querySelector('textarea');
 const objectSelector = document.getElementById('objectSelector');
 const btnValidate = document.getElementById('btnValidate');
 const btnSave = document.getElementById('btnSave');
 const validationOutput = document.getElementById('validationOutput');
+const actionLog = document.getElementById('actionLog');
 let currentTarget = '';
+
+function addActionLog(type, message) {
+  actionLog.innerHTML += `<p class="log-${type}">${message}</p>`;
+  actionLog.scrollTo({
+    top: actionLog.scrollHeight,
+    behavior: 'smooth'
+  });
+}
 
 objectSelector.addEventListener('change', (event) => {
   if (event.target.value === 'disabled') {
