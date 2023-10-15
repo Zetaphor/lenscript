@@ -228,8 +228,8 @@ export class lenscriptScene {
       throw new Error(`Object ${name} does not have a state ${value}`);
     }
     else {
+      this.#objectStateTransitioned(name, this.#children[name].object.currentState, value, this.#children[name].object.states[value]);
       this.#children[name].object.currentState = value;
-      this.#objectStateTransitioned(name, this.#children[name].object.currentState, value);
     }
   }
 
