@@ -15,19 +15,19 @@ class lenscriptObject {
 export class lenscriptScene {
   #variables = {};
   #children = {};
-  #transitionCallback = null;
+  #stateUpdateCallback = null;
   #actionCallback = null;
   #grammar = null
 
   /**
    * Validate the scene
    *
-   * @throws {Error} if the scene does not have a transition callback
+   * @throws {Error} if the scene does not have a state update callback
    * @throws {Error} if the scene does not have an action callback
    * @throws {Error} if the scene does not have a grammar
    */
   #validateScene() {
-    if (!this.#transitionCallback) throw new Error('Scene must have a transition callback');
+    if (!this.#stateUpdateCallback) throw new Error('Scene must have a state update callback');
     if (!this.#actionCallback) throw new Error('Scene must have an action callback');
     if (!this.#grammar) throw new Error('Scene must have a grammar');
   }
@@ -42,20 +42,20 @@ export class lenscriptScene {
    * @param {lenscriptObjectProperties} state the new state properties
    * @throws {Error} if the scene does not have a transition callback
    */
-  #objectStateTransitioned(name, prevName, newName, state) {
-    if (!this.#transitionCallback) throw new Error('Scene must have a transition callback');
-    this.#transitionCallback(name, prevName, newName, state);
+  #objectStateUpdated(name, details, state) {
+    if (!this.#stateUpdateCallback) throw new Error('Scene must have a transition callback');
+    this.#stateUpdateCallback(name, details, state);
   }
 
   /**
-   * Set the transition callback function
+   * Set the state update callback function
    *
    * @param {function} callback
-   * @throws {Error} if the scene does not have a transition callback
+   * @throws {Error} if the scene does not have a state update callback
    */
-  registerTransitionCallback(callback) {
-    if (typeof callback !== 'function') throw new Error('Transition callback must be a function');
-    this.#transitionCallback = callback;
+  registerStateUpdateCallback(callback) {
+    if (typeof callback !== 'function') throw new Error('State update callback must be a function');
+    this.#stateUpdateCallback = callback;
   }
 
   /**
@@ -228,7 +228,7 @@ export class lenscriptScene {
       throw new Error(`Object ${name} does not have a state ${value}`);
     }
     else {
-      this.#objectStateTransitioned(name, this.#children[name].object.currentState, value, this.#children[name].object.states[value]);
+      this.#stateUpdateCallback(name, { reason: 'stateChange', prevState: this.#children[name].object.currentState, newState: value }, this.#children[name].object.states[value]);
       this.#children[name].object.currentState = value;
     }
   }
@@ -269,7 +269,7 @@ export class lenscriptScene {
       throw new Error(`Object ${name} does not have a state ${state}`);
     }
     if (state === 'default') throw new Error('Cannot remove the default state');
-    if (this.#children[name].objects.currentState === state) this.#children[name].object.currentState = 'default';
+    if (this.#children[name].objects.currentState === state) this.objectState(name, 'default');
     delete this.#children[name].object.states[state];
   }
 
@@ -290,7 +290,10 @@ export class lenscriptScene {
       throw new Error(`Object ${name} does not have a property ${property}`);
     }
     if (value === null) return this.#children[name].object.states[this.#children[name].object.currentState][property];
-    else return this.#children[name].object.states[this.#children[name].object.currentState][property] = value;
+    else {
+      this.#stateUpdateCallback(name, { reason: 'propertyChange', property: property, prevValue: this.#children[name].object.states[this.#children[name].object.currentState][property], newValue: value }, this.#children[name].object.states[value]);
+      return this.#children[name].object.states[this.#children[name].object.currentState][property] = value;
+    }
   }
 
   /**
