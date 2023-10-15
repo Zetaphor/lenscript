@@ -286,13 +286,15 @@ export class lenscriptScene {
   objectProperty(name, property, value = null) {
     this.#validateScene();
     if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
-    if (this.objecs[name].states[this.#children[name].object.currentState][property] === undefined) {
+    const currentState = this.#children[name].object.currentState;
+    if (this.#children[name].object.states[currentState][property] === undefined) {
       throw new Error(`Object ${name} does not have a property ${property}`);
     }
-    if (value === null) return this.#children[name].object.states[this.#children[name].object.currentState][property];
+    if (value === null) return this.#children[name].object.states[currentState][property];
     else {
-      this.#stateUpdateCallback(name, { reason: 'propertyChange', property: property, prevValue: this.#children[name].object.states[this.#children[name].object.currentState][property], newValue: value }, this.#children[name].object.states[value]);
-      return this.#children[name].object.states[this.#children[name].object.currentState][property] = value;
+      const prevValue = this.#children[name].object.states[currentState][property];
+      this.#stateUpdateCallback(name, { reason: 'propertyChange', property: property, prevValue: prevValue, newValue: value }, this.#children[name].object.states[currentState]);
+      return this.#children[name].object.states[currentState][property] = value;
     }
   }
 
