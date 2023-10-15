@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupScene() {
   scene = new lenscriptScene();
   scene.registerGrammar(grammar);
-  scene.registerTransitionCallback(objectTransitioned);
+  scene.registerStateUpdateCallback(objectStateUpdate);
   scene.registerActionCallback(actionCallback);
 }
 
@@ -87,15 +87,18 @@ function setupTargetElements() {
     // TODO Lowercase everything in lenscript
 
     const scripts = [
-      'When started then bg color 255 0 0',
+      'When started then set bg color 0 255 0, set text color red',
     ]
 
-    console.log(scene.validateScripts(scripts));
+    const validation = scene.validateScripts(scripts);
+    if (!validation.valid) {
+      console.error('Invalid scripts:', validation.errors);
+      return;
+    }
 
     scene.setScripts(name, scripts);
-
-    scene.trigger(name, 'started');
     scene.objectState(name, 'default');
+    scene.trigger(name, 'started');
 
     element.addEventListener('dragstart', () => {
       scene.trigger(name, 'grabStart');
