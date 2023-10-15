@@ -322,7 +322,7 @@ export class lenscriptScene {
     }
     if (value === null) return this.#children[name].variables[variable];
     else {
-      console.log(`Object ${name} variable ${variable} set to ${value}`);
+      console.info(`Object ${name} variable ${variable} set to ${value}`);
       if (typeof value === 'object') value = JSON.stringify(value);
       else value = value.toString();
       this.#children[name].variables[variable] = value;
