@@ -4,10 +4,10 @@ import { grammar } from "./browser_grammar.js";
 class browserInterfaceProperties {
   constructor() {
     this.visible = true;
-    this.rotation = { deg: 0 };
+    this.rotation = 0;
     this.textColor = { r: 255, g: 255, b: 255 };
     this.bgColor = { r: 0, g: 0, b: 0 };
-    this.scale = { x: 1, y: 1 };
+    this.scale = 1;
     this.opacity = 1;
   }
 }
@@ -35,10 +35,10 @@ function objectStateUpdate(name, details, state) {
   targetElement.style.visibility = state.visible ? 'visible' : 'hidden';
   targetElement.style.opacity = state.opacity;
   if (typeof state.bgColor.r !== 'undefined') {
-  targetElement.style.backgroundColor = `rgb(${state.bgColor.r}, ${state.bgColor.g}, ${state.bgColor.b})`;
+    targetElement.style.backgroundColor = `rgb(${state.bgColor.r}, ${state.bgColor.g}, ${state.bgColor.b})`;
   } else targetElement.style.backgroundColor = state.bgColor.value;
   if (typeof state.textColor.r !== 'undefined') {
-  targetElement.style.color = `rgb(${state.textColor.r}, ${state.textColor.g}, ${state.textColor.b})`;
+    targetElement.style.color = `rgb(${state.textColor.r}, ${state.textColor.g}, ${state.textColor.b})`;
   } else targetElement.style.color = state.textColor.value;
   targetElement.style.transform = `rotate(${state.rotation}) scale(${state.scale})`;
 }
@@ -86,25 +86,57 @@ function setupScene() {
 function setupTargetElements() {
   targetElements = document.querySelectorAll('.test-object');
 
-  targetElements.forEach((element) => {
+  const scripts = [
+    [
+      'When started then set bg color 0 255 0, set text color 255 255 255',
+      'When hover started then set bg color 144 175 174, set text color 237 213 4',
+      'When hovered then set bg color 39 11 130, set text color 255 255 255',
+      'When touched then set scale 1.5, set opacity 0.5',
+      'When grabbed then set bg color 58 209 136, set text color 255 255 255',
+      'When dropped then set bg color 42 127 50, set text color 255 255 255',
+    ],
+    [
+      'When started then set bg color 145 240 247, set text color 255 255 255',
+      'When hover started then set bg color 15 71 60, set text color 237 213 4',
+      'When hovered then set bg color 179 130 221, set text color 255 255 255',
+      'When touched then set bg color 81 117 145, set text color 255 255 255, set rotation 35',
+      'When grabbed then set bg color 15 71 60, set text color 255 255 255',
+      'When dropped then set bg color 188 20 79, set text color 255 255 255',
+    ],
+    [
+      'When started then set bg color 48 157 163, set text color 255 255 255',
+      'When hover started then set bg color 68 139 244, set text color 237 213 4',
+      'When hovered then set bg color 183 244 210, set text color 255 255 255',
+      'When touched then set bg color 48 157 163, set text color 255 255 255',
+      'When grabbed then set bg color 93 96 54, set text color 255 255 255',
+      'When dropped then set bg color 191 180 30, set text color 255 255 255',
+    ],
+    [
+      'When started then set bg color 137 107 113, set text color 255 255 255',
+      'When hover started then set bg color 0 204 226, set text color 237 213 4',
+      'When hovered then set bg color 2 0 2, set text color 255 255 255',
+      'When touched then set bg color 164 189 191, set text color 255 255 255',
+      'When grabbed then set bg color 57 73 71, set text color 255 255 255',
+      'When dropped then set bg color 76 75 48, set text color 255 255 255',
+    ]
+  ]
+
+
+  for (let i = 0; i < targetElements.length; i++) {
+    const element = targetElements[i];
     const name = element.getAttribute('data-name');
 
     scene.add(name, new browserInterfaceProperties());
 
     // TODO Lowercase everything in lenscript
 
-    const scripts = [
-      'When started then set bg color 0 255 0, set text color red',
-    ]
-
-    const validation = scene.validateScripts(scripts);
+    const validation = scene.validateScripts(scripts[i]);
     if (!validation.valid) {
       console.error('Invalid scripts:', validation.errors);
       return;
     }
 
-    scene.setScripts(name, scripts);
-    scene.objectState(name, 'default');
+    scene.setScripts(name, scripts[i]);
     scene.trigger(name, 'started');
 
     element.addEventListener('dragstart', () => {
