@@ -202,5 +202,7 @@ const textarea = document.querySelector('textarea');
 const objectSelector = document.getElementById('objectSelector');
 
 objectSelector.addEventListener('change', (event) => {
-  textarea.value = scene.objectScripts(event.target.value);
+  if (event.target.value === 'disabled') {
+    textarea.value = '';
+  } else textarea.value = scene.objectScripts(event.target.value);
 });
