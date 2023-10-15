@@ -91,7 +91,7 @@ export const grammar = {
       "remember [name] [value]"
     ],
     bgColor: [
-      "set bg color [value]"
+      "set bg color [r] [b] [g]"
     ],
     textColor: [
       "set text color [value]"

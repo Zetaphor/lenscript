@@ -4,9 +4,9 @@ import { grammar } from "./browser_grammar.js";
 class browserInterfaceProperties {
   constructor() {
     this.visible = true;
-    this.position = { x: 0, y: 0, z: 0 };
     this.rotation = { x: 0, y: 0, z: 0, w: 1 };
-    this.color = { r: 0, g: 0, b: 0 };
+    this.textColor = { r: 255, g: 255, b: 255 };
+    this.bgColor = { r: 0, g: 0, b: 0 };
     this.scale = { x: 1, y: 1, z: 1 };
     this.opacity = 1;
   }
@@ -25,8 +25,13 @@ let scene = null;
  * @param {object} state the new state properties
  */
 function objectTransitioned(name, prevState, nextState, state) {
-  console.log(`Object ${name} transitioned from ${prevState} to ${nextState}`);
-  console.log(state);
+  addActionLog('transition', `Object ${name} transitioned from ${prevState} to ${nextState}`);
+  const targetElement = document.querySelector(`[data-name="${name}"]`);
+  targetElement.style.visibility = state.visible ? 'visible' : 'hidden';
+  targetElement.style.opacity = state.opacity;
+  targetElement.style.backgroundColor = `rgb(${state.bgColor.r}, ${state.bgColor.g}, ${state.bgColor.b})`;
+  targetElement.style.color = `rgb(${state.textColor.r}, ${state.textColor.g}, ${state.textColor.b})`;
+  targetElement.style.transform = `translate(${state.rotation.x}, ${state.rotation.y}, ${state.rotation.z}) scale(${state.scale.x}, ${state.scale.y}, ${state.scale.z})`;
 }
 
 /**
@@ -38,8 +43,14 @@ function objectTransitioned(name, prevState, nextState, state) {
  * @param {object} params action parameters
  */
 function actionCallback(objectName, actionName, params) {
-  console.log(`Object ${objectName} triggered action ${actionName} with params`, params);
   const targetElement = document.querySelector(`[data-name="${objectName}"]`);
+  addActionLog('action', `Object ${objectName} triggered action ${actionName} ${params.length ? 'with params ' + JSON.stringify(params) : ''}`);
+  if (actions[actionName]) {
+    actions[actionName](objectName, ...params);
+  } else {
+    addActionLog('action', `Action ${actionName} does not exist`);
+    throw new Error(`Action ${actionName} does not exist`);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -68,9 +79,18 @@ function setupTargetElements() {
 
     scene.add(name, new browserInterfaceProperties());
 
+    // TODO Lowercase everything in lenscript
+
+    const scripts = [
+      'When started then bg color 255 0 0',
+    ]
+
+    console.log(scene.validateScripts(scripts));
+
     scene.setScripts(name, scripts);
 
     scene.trigger(name, 'started');
+    scene.objectState(name, 'default');
 
     element.addEventListener('dragstart', () => {
       scene.trigger(name, 'grabStart');
@@ -107,9 +127,31 @@ function setupTargetElements() {
 }
 
 const actions = {
-  play: function (soundName, volume = 100) {
-    console.log('play', soundName, volume);
-  }
+  play: function (name, ...params) {
+    console.log('play', params);
+  },
+  bgColor: function (name, r, g, b) {
+    console.log('bgColor', r, g, b);
+    const targetElement = document.querySelector(`[data-name="${name}"]`);
+    targetElement.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+  },
+  textColor: function (name, r, g, b) {
+    console.log('textColor', r, g, b);
+    const targetElement = document.querySelector(`[data-name="${name}"]`);
+    targetElement.style.color = `rgb(${r}, ${g}, ${b})`;
+  },
+  scale: function (name, x, y, z) {
+    console.log('scale', x, y, z);
+  },
+  rotation: function (name, de) {
+    console.log('rotation', x, y, z, w);
+  },
+  opacity: function (name, opacity) {
+    console.log('opacity', opacity);
+  },
+  visibility: function (name, visible) {
+    console.log('visibility', visible);
+  },
 }
 
 /**************************************************/
@@ -119,4 +161,6 @@ const actions = {
 /* This like updating the output logs, etc.       */
 /**************************************************/
 
-
+function addActionLog(type, message) {
+  document.querySelector('.action-log').innerHTML += `<p class="log-${type}">${message}</p>`;
+}
