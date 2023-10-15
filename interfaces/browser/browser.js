@@ -17,6 +17,8 @@ let scene = null;
 
 /**
  * Called from the scene when an object has changed states
+ * Updates the CSS properties of the target element based on the object state
+ * Updates the action log with a notice about the property change
  * Registered in the scene from setupScene()
  *
  * @param {string} name the name of the object
@@ -44,6 +46,8 @@ function objectStateUpdate(name, details, state) {
 
 /**
  * Called from the scene when an action is triggered
+ * Implements the browser interpretation of the action
+ * Updates the action log with a notice about the action
  * Registered in the scene from setupScene()
  *
  * @param {string} objectName the name of the object
@@ -63,7 +67,9 @@ function actionCallback(objectName, actionName, params) {
     console.log(objectName, actionName, params);
   }
 }
-
+/**
+ * Set up the scene and target elements on page load
+ */
 document.addEventListener('DOMContentLoaded', () => {
   setupScene();
   setupTargetElements();
