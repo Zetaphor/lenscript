@@ -57,16 +57,26 @@ function objectStateUpdate(name, details, state) {
 function actionCallback(objectName, actionName, params) {
   const hasParams = typeof params == 'object' && Object.keys(params).length || params.length;
   const targetElement = document.querySelector(`[data-name="${objectName}"]`);
-  addActionLog('action', `Object ${objectName} triggered action ${actionName} ${hasParams ? 'with params ' + JSON.stringify(params) : ''}`);
 
   // Filter for actions that only update an objects property
-  const nonPropertyActions = ['play', 'tell', 'remember', 'loop', 'endLoop'];
+  const nonPropertyActions = ['tell', 'remember', 'save', 'become'];
   if (!nonPropertyActions.includes(actionName)) {
     scene.objectProperty(objectName, actionName, params);
   } else {
-    console.log(objectName, actionName, params);
+    if (actionName === 'remember') scene.objectVariable(objectName, params.name, params.value);
+    else if (actionName === 'save') scene.variable(params.name, params.value);
+    else if (actionName === 'tell') {
+      scene.trigger(params.target, 'heard', params.value);
+      console.log('tell', params);
+      // TODO: Implement told trigger, not sure if that's ready yet
+      // Also implement remembered and saved triggers
+    } else if (actionName === 'become') {
+      console.log('become', params);
+    }
   }
+  addActionLog('action', `Object ${objectName} triggered action ${actionName} ${hasParams ? 'with params ' + JSON.stringify(params) : ''}`);
 }
+
 /**
  * Set up the scene and target elements on page load
  */
@@ -96,7 +106,7 @@ function setupTargetElements() {
       'When started then set bg color 0 255 0, set text color 255 255 255',
       'When hover started then set bg color 144 175 174, set text color 237 213 4',
       'When hovered then set bg color 39 11 130, set text color 255 255 255',
-      'When touched then set scale 1.5, set opacity 0.5',
+      'When touched then save test 1',
       'When grabbed then set bg color 58 209 136, set text color 255 255 255',
       'When dropped then set bg color 42 127 50, set text color 255 255 255',
     ],
@@ -104,7 +114,7 @@ function setupTargetElements() {
       'When started then set bg color 145 240 247, set text color 255 255 255',
       'When hover started then set bg color 15 71 60, set text color 237 213 4',
       'When hovered then set bg color 179 130 221, set text color 255 255 255',
-      'When touched then set bg color 81 117 145, set text color 255 255 255, set rotation 35',
+      'When touched then tell testObject1 hello',
       'When grabbed then set bg color 15 71 60, set text color 255 255 255',
       'When dropped then set bg color 188 20 79, set text color 255 255 255',
     ],
