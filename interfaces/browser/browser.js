@@ -28,14 +28,19 @@ function objectStateUpdate(name, details, state) {
   if (details.reason === 'stateChange') {
     addActionLog('transition', `Object ${name} transitioned from ${details.prevState} to ${details.newState}`);
   } else if (details.reason === 'propertyChange') {
-    addActionLog('property', `Object ${name} property ${details.property} changed from ${details.prevValue} to ${details.newValue}`);
+    addActionLog('property', `Object ${name} property ${details.property} changed from ${JSON.stringify(details.prevValue)} to ${JSON.stringify(details.newValue)}`);
   }
   const targetElement = document.querySelector(`[data-name="${name}"]`);
+  console.log(name, details, state);
   targetElement.style.visibility = state.visible ? 'visible' : 'hidden';
   targetElement.style.opacity = state.opacity;
+  if (typeof state.bgColor.r !== 'undefined') {
   targetElement.style.backgroundColor = `rgb(${state.bgColor.r}, ${state.bgColor.g}, ${state.bgColor.b})`;
+  } else targetElement.style.backgroundColor = state.bgColor.value;
+  if (typeof state.textColor.r !== 'undefined') {
   targetElement.style.color = `rgb(${state.textColor.r}, ${state.textColor.g}, ${state.textColor.b})`;
-  targetElement.style.transform = `rotate(${state.rotation.deg}) scale(${state.scale.x}, ${state.scale.y})`;
+  } else targetElement.style.color = state.textColor.value;
+  targetElement.style.transform = `rotate(${state.rotation}) scale(${state.scale})`;
 }
 
 /**
@@ -50,11 +55,13 @@ function actionCallback(objectName, actionName, params) {
   const hasParams = typeof params == 'object' && Object.keys(params).length || params.length;
   const targetElement = document.querySelector(`[data-name="${objectName}"]`);
   addActionLog('action', `Object ${objectName} triggered action ${actionName} ${hasParams ? 'with params ' + JSON.stringify(params) : ''}`);
-  if (actions[actionName]) {
-    actions[actionName](objectName, params);
+
+  // Filter for actions that only update an objects property
+  const nonPropertyActions = ['play', 'tell', 'remember', 'loop', 'endLoop'];
+  if (!nonPropertyActions.includes(actionName)) {
+    scene.objectProperty(objectName, actionName, params);
   } else {
-    addActionLog('action', `Action ${actionName} does not exist`);
-    throw new Error(`Action ${actionName} does not exist`);
+    console.log(objectName, actionName, params);
   }
 }
 
@@ -131,62 +138,7 @@ function setupTargetElements() {
     element.addEventListener('mouseup', () => {
       scene.trigger(name, 'touchEnd');
     });
-  });
-}
-
-/**
- * Get the CSS transforms for the actions so they can be applied to the target element
- * @param {HTMLElement} element
- * @returns
- */
-function getCssTransform(element) {
-  const computedStyle = window.getComputedStyle(element);
-  const transformValue = computedStyle.getPropertyValue("transform");
-  const transformMatrix = new DOMMatrix(transformValue);
-  const scaleX = transformMatrix.a;
-  const scaleY = transformMatrix.d;
-  const rotation = Math.atan2(transformMatrix.b, transformMatrix.a) * (180 / Math.PI);
-  return scaleX, scaleY, rotation
-}
-
-const actions = {
-  play: function (name, params) {
-    console.log('play', name, params);
-  },
-  bgColor: function (name, params) {
-    const targetElement = document.querySelector(`[data-name="${name}"]`);
-    if (typeof params['value'] !== 'undefined') {
-      targetElement.style.backgroundColor = `${params['value']}`;
-    } else targetElement.style.backgroundColor = `rgb(${params.r}, ${params.g}, ${params.b})`;
-  },
-  textColor: function (name, params) {
-    const targetElement = document.querySelector(`[data-name="${name}"]`);
-    if (typeof params['value'] !== 'undefined') {
-      targetElement.style.color = `${params['value']}`;
-    } else targetElement.style.color = `rgb(${params.r}, ${params.g}, ${params.b})`;
-  },
-  scale: function (name, x, y) {
-    const targetElement = document.querySelector(`[data-name="${name}"]`);
-    const [scaleX, scaleY, rotation] = getCssTransform(targetElement);
-    targetElement.style.transform = `rotate(${rotation}deg) scale(${x}, ${y})`;
-    console.log('scale', name, x, y)
-  },
-  rotation: function (name, deg) {
-    console.log('rotation', name, deg);
-    const targetElement = document.querySelector(`[data-name="${name}"]`);
-    const [scaleX, scaleY, rotation] = getCssTransform(targetElement);
-    targetElement.style.transform = `rotate(${deg}deg) scale(${scaleX}, ${scaleY})`;
-  },
-  opacity: function (name, opacity) {
-    console.log('opacity', name, opacity);
-    const targetElement = document.querySelector(`[data-name="${name}"]`);
-    targetElement.style.opacity = opacity;
-  },
-  visibility: function (name, visible) {
-    console.log('visibility', name, visible);
-    const targetElement = document.querySelector(`[data-name="${name}"]`);
-    targetElement.style.visibility = visible ? 'visible' : 'hidden';
-  },
+  }
 }
 
 /**************************************************/
