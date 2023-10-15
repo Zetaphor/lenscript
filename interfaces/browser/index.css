@@ -35,7 +35,26 @@
 .action-log {
   border: 1px solid black;
   width: 100%;
-  min-height: 50px;
+  height: 415px;
+  overflow: scroll;
+}
+
+.action-log p {
+  margin: 0;
+  padding: 10px;
+  border-bottom: 1px solid black;
+}
+
+p.log-action {
+  background-color: #f2f2f2;
+}
+
+p.log-property {
+  background-color: #e6e6e6;
+}
+
+p.log-transition {
+  background-color: #d9d9d9;
 }
 
 button {
