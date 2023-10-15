@@ -47,10 +47,11 @@ function objectStateUpdate(name, details, state) {
  * @param {object} params action parameters
  */
 function actionCallback(objectName, actionName, params) {
+  const hasParams = typeof params == 'object' && Object.keys(params).length || params.length;
   const targetElement = document.querySelector(`[data-name="${objectName}"]`);
-  addActionLog('action', `Object ${objectName} triggered action ${actionName} ${params.length ? 'with params ' + JSON.stringify(params) : ''}`);
+  addActionLog('action', `Object ${objectName} triggered action ${actionName} ${hasParams ? 'with params ' + JSON.stringify(params) : ''}`);
   if (actions[actionName]) {
-    actions[actionName](objectName, ...params);
+    actions[actionName](objectName, params);
   } else {
     addActionLog('action', `Action ${actionName} does not exist`);
     throw new Error(`Action ${actionName} does not exist`);
