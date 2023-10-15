@@ -202,9 +202,42 @@ function addActionLog(type, message) {
 
 const textarea = document.querySelector('textarea');
 const objectSelector = document.getElementById('objectSelector');
+const btnValidate = document.getElementById('btnValidate');
+const btnSave = document.getElementById('btnSave');
+const validationOutput = document.getElementById('validationOutput');
+let currentTarget = '';
 
 objectSelector.addEventListener('change', (event) => {
   if (event.target.value === 'disabled') {
     textarea.value = '';
-  } else textarea.value = scene.objectScripts(event.target.value);
+  } else {
+    currentTarget = event.target.value;
+    textarea.value = scene.objectScripts(currentTarget).join('\n');
+  }
 });
+
+function validateScripts(scripts) {
+  try {
+    const validation = scene.validateScripts(scripts);
+    if (validation.valid) {
+      validationOutput.innerHTML = `<p>Valid</p>`;
+    } else {
+      validationOutput.innerHTML = `<p>Invalid: ${validation.errors}</p>`;
+    }
+    return validation.valid;
+  } catch (error) {
+    validationOutput.innerHTML = `<p>Invalid: ${error}</p>`;
+    return false;
+  }
+}
+
+btnValidate.addEventListener('click', () => {
+  validateScripts(textarea.value.trim().split('\n'));
+})
+
+btnSave.addEventListener('click', () => {
+  const scripts = textarea.value.trim().split('\n');
+  if (!validateScripts(scripts)) return;
+  scene.setScripts(currentTarget, scripts);
+  validationOutput.innerHTML = `<p>Saved</p>`;
+})
