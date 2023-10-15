@@ -4,10 +4,10 @@ import { grammar } from "./browser_grammar.js";
 class browserInterfaceProperties {
   constructor() {
     this.visible = true;
-    this.rotation = { x: 0, y: 0, z: 0, w: 1 };
+    this.rotation = { deg: 0 };
     this.textColor = { r: 255, g: 255, b: 255 };
     this.bgColor = { r: 0, g: 0, b: 0 };
-    this.scale = { x: 1, y: 1, z: 1 };
+    this.scale = { x: 1, y: 1 };
     this.opacity = 1;
   }
 }
@@ -134,31 +134,56 @@ function setupTargetElements() {
   });
 }
 
+function getCssTransform(element) {
+  const computedStyle = window.getComputedStyle(element);
+  const transformValue = computedStyle.getPropertyValue("transform");
+  const transformMatrix = new DOMMatrix(transformValue);
+  const scaleX = transformMatrix.a;
+  const scaleY = transformMatrix.d;
+  const rotation = Math.atan2(transformMatrix.b, transformMatrix.a) * (180 / Math.PI);
+  console.log("Scale X:", scaleX);
+  console.log("Scale Y:", scaleY);
+  console.log("Rotation (degrees):", rotation);
+  return scaleX, scaleY, rotation
+}
+
 const actions = {
-  play: function (name, ...params) {
-    console.log('play', params);
+  play: function (name, params) {
+    console.log('play', name, params);
   },
-  bgColor: function (name, r, g, b) {
-    console.log('bgColor', r, g, b);
+  bgColor: function (name, params) {
     const targetElement = document.querySelector(`[data-name="${name}"]`);
-    targetElement.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+    if (typeof params['value'] !== 'undefined') {
+      targetElement.style.backgroundColor = `${params['value']}`;
+    } else targetElement.style.backgroundColor = `rgb(${params.r}, ${params.g}, ${params.b})`;
   },
-  textColor: function (name, r, g, b) {
-    console.log('textColor', r, g, b);
+  textColor: function (name, params) {
     const targetElement = document.querySelector(`[data-name="${name}"]`);
-    targetElement.style.color = `rgb(${r}, ${g}, ${b})`;
+    if (typeof params['value'] !== 'undefined') {
+      targetElement.style.color = `${params['value']}`;
+    } else targetElement.style.color = `rgb(${params.r}, ${params.g}, ${params.b})`;
   },
-  scale: function (name, x, y, z) {
-    console.log('scale', x, y, z);
+  scale: function (name, x, y) {
+    const targetElement = document.querySelector(`[data-name="${name}"]`);
+    const [scaleX, scaleY, rotation] = getCssTransform(targetElement);
+    targetElement.style.transform = `rotate(${rotation}deg) scale(${x}, ${y})`;
+    console.log('scale', name, x, y)
   },
-  rotation: function (name, de) {
-    console.log('rotation', x, y, z, w);
+  rotation: function (name, deg) {
+    console.log('rotation', name, deg);
+    const targetElement = document.querySelector(`[data-name="${name}"]`);
+    const [scaleX, scaleY, rotation] = getCssTransform(targetElement);
+    targetElement.style.transform = `rotate(${deg}deg) scale(${scaleX}, ${scaleY})`;
   },
   opacity: function (name, opacity) {
-    console.log('opacity', opacity);
+    console.log('opacity', name, opacity);
+    const targetElement = document.querySelector(`[data-name="${name}"]`);
+    targetElement.style.opacity = opacity;
   },
   visibility: function (name, visible) {
-    console.log('visibility', visible);
+    console.log('visibility', name, visible);
+    const targetElement = document.querySelector(`[data-name="${name}"]`);
+    targetElement.style.visibility = visible ? 'visible' : 'hidden';
   },
 }
 
@@ -172,3 +197,10 @@ const actions = {
 function addActionLog(type, message) {
   document.querySelector('.action-log').innerHTML += `<p class="log-${type}">${message}</p>`;
 }
+
+const textarea = document.querySelector('textarea');
+const objectSelector = document.getElementById('objectSelector');
+
+objectSelector.addEventListener('change', (event) => {
+  textarea.value = scene.objectScripts(event.target.value);
+});
