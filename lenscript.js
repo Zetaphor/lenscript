@@ -149,7 +149,12 @@ export class lenscriptScene {
   variable(name, value = null) {
     this.#validateScene();
     if (value === null) return this.#variables[name] || '';
-    else this.#variables[name] = value.toString();
+    else {
+      if (typeof value === 'object') value = JSON.stringify(value);
+      else value = value.toString();
+      this.#variables[name] = value;
+      console.info(`Scene variable ${name} set to ${value}`);
+    }
   }
 
   /**
@@ -316,7 +321,12 @@ export class lenscriptScene {
       throw new Error(`Object ${name} does not have a variable ${variable}`);
     }
     if (value === null) return this.#children[name].variables[variable];
-    return this.#children[name].variables[variable] = value;
+    else {
+      console.log(`Object ${name} variable ${variable} set to ${value}`);
+      if (typeof value === 'object') value = JSON.stringify(value);
+      else value = value.toString();
+      this.#children[name].variables[variable] = value;
+    }
   }
 
   /**
