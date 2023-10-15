@@ -10,4 +10,6 @@ Anyland was developed by Philipp Lenssen so the name is an homage to him for the
 
 ## Documentation
 
-See [the wiki](https://github.com/Zetaphor/lenscript/wiki) for more information.
+~~See [the wiki](https://github.com/Zetaphor/lenscript/wiki) for more information.~~
+
+This needs to be completely rewritten. That will be done after I finish the browser implementation
