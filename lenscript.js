@@ -98,7 +98,10 @@ export class lenscriptScene {
     if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
     if (!this.#grammar.triggers[trigger]) throw new Error(`Trigger ${trigger} does not exist`);
     const objectTriggers = this.objectTriggers(name);
-    if (!objectTriggers.includes(trigger)) throw new Error(`Object ${name} does not have trigger ${trigger}`);
+    if (!objectTriggers.includes(trigger)) {
+      console.warn(`Object ${name} does not have trigger ${trigger}`)
+      return;
+    }
     const sceneObject = this.object(name);
     const script = sceneObject.parsedScripts.find(script => script.trigger === trigger);
     for (let i = 0; i < script.actions.length; i++) {
