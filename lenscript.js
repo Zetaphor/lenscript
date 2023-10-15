@@ -101,7 +101,7 @@ export class lenscriptScene {
     const sceneObject = this.object(name);
     const script = sceneObject.parsedScripts.find(script => script.trigger === trigger);
     for (let i = 0; i < script.actions.length; i++) {
-      this.#actionCallback(name, script.actions[i].actionName, params);
+      this.#actionCallback(name, script.actions[i].actionName, script.actions[i].params);
     }
   }
 
