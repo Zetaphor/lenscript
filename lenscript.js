@@ -88,11 +88,12 @@ export class lenscriptScene {
    * Trigger an action
    *
    * @param {string} name
-   * @param  {...any} params
+   * @param {string} trigger the trigger name
+   * @param {object} params optional action parameters, if provided will override the scripts defined action parameters
    * @throws {Error} if the object does not exist
    * @throws {Error} if the trigger does not exist
    */
-  trigger(name, trigger, ...params) {
+  trigger(name, trigger, params = null) {
     this.#validateScene();
     if (!this.#children[name]) throw new Error(`Object ${name} does not exist`);
     if (!this.#grammar.triggers[trigger]) throw new Error(`Trigger ${trigger} does not exist`);
@@ -101,7 +102,8 @@ export class lenscriptScene {
     const sceneObject = this.object(name);
     const script = sceneObject.parsedScripts.find(script => script.trigger === trigger);
     for (let i = 0; i < script.actions.length; i++) {
-      this.#actionCallback(name, script.actions[i].actionName, script.actions[i].params);
+      if (params) this.#actionCallback(name, script.actions[i].actionName, params);
+      else this.#actionCallback(name, script.actions[i].actionName, script.actions[i].params);
     }
   }
 
