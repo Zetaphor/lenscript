@@ -66,23 +66,8 @@ export const grammar = {
     endLoop: [
       "end loop"
     ],
-    toggle: [
-      "toggle [target]"
-    ],
     visibility: [
       "set visibility [value]"
-    ],
-    show: [
-      "show"
-    ],
-    hide: [
-      "hide"
-    ],
-    become: [
-      "become [value]"
-    ],
-    destroy: [
-      ""
     ],
     tell: [
       "tell [target] [value]"
@@ -91,10 +76,12 @@ export const grammar = {
       "remember [name] [value]"
     ],
     bgColor: [
-      "set bg color [r] [b] [g]"
+      "set bg color [value]",
+      "set bg color [r] [g] [b]"
     ],
     textColor: [
-      "set text color [value]"
+      "set text color [value]",
+      "set text color [r] [g] [b]"
     ],
     rotation: [
       "set rotation [value]"
