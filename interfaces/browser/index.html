@@ -9,25 +9,32 @@
 
 <body>
   <div class="container">
-    <div class="box">
-      <div data-name="target1" draggable="true" class="target">Target 1</div>
+    <div class="column">
+      <div class="row">
+        <div draggable="true" class="test-object" data-name="testObject1">
+          <p>testObject1</p>
+        </div>
+        <div draggable="true" class="test-object" data-name="testObject2">testObject2</div>
+        <div draggable="true" class="test-object" data-name="testObject3">testObject3</div>
+        <div draggable="true" class="test-object" data-name="testObject4">testObject4</div>
+      </div>
     </div>
-    <div class="box">
-      <div data-name="target2" draggable="true" class="target">Target 2</div>
+    <div class="column">
+      <h1 class="title">Action Log</h1>
+      <div class="action-log">
+      </div>
     </div>
-    <div class="box">
-      <div data-name="target3" draggable="true" class="target">Target 3</div>
-    </div>
+  </div>
+  <div>
+    <select>
+      <option value="testObject1">Object 1</option>
+      <option value="testObject2">Object 2</option>
+      <option value="testObject3">Object 3</option>
+      <option value="testObject4">Object 4</option>
+    </select>
+    <textarea>
 
-    <!-- Command Input -->
-    <label for="commandInput" class="label">Type a command:</label>
-    <textarea id="commandInput" class="command-input"></textarea>
-
-    <!-- Suggestions List -->
-    <ul id="suggestions" class="suggestions-list"></ul>
-
-    <!-- Test Commands Button -->
-    <button id="testCommands" class="test-button">Test Commands</button>
+    </textarea>
   </div>
 
   <script src="./browser.js" type="module"></script>
