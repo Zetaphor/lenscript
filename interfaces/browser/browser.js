@@ -24,14 +24,18 @@ let scene = null;
  * @param {string} nextState the new state
  * @param {object} state the new state properties
  */
-function objectTransitioned(name, prevState, nextState, state) {
-  addActionLog('transition', `Object ${name} transitioned from ${prevState} to ${nextState}`);
+function objectStateUpdate(name, details, state) {
+  if (details.reason === 'stateChange') {
+    addActionLog('transition', `Object ${name} transitioned from ${details.prevState} to ${details.newState}`);
+  } else if (details.reason === 'propertyChange') {
+    addActionLog('property', `Object ${name} property ${details.property} changed from ${details.prevValue} to ${details.newValue}`);
+  }
   const targetElement = document.querySelector(`[data-name="${name}"]`);
   targetElement.style.visibility = state.visible ? 'visible' : 'hidden';
   targetElement.style.opacity = state.opacity;
   targetElement.style.backgroundColor = `rgb(${state.bgColor.r}, ${state.bgColor.g}, ${state.bgColor.b})`;
   targetElement.style.color = `rgb(${state.textColor.r}, ${state.textColor.g}, ${state.textColor.b})`;
-  targetElement.style.transform = `translate(${state.rotation.x}, ${state.rotation.y}, ${state.rotation.z}) scale(${state.scale.x}, ${state.scale.y}, ${state.scale.z})`;
+  targetElement.style.transform = `rotate(${state.rotation.deg}) scale(${state.scale.x}, ${state.scale.y})`;
 }
 
 /**
