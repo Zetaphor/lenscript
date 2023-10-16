@@ -158,7 +158,7 @@ function setupTargetElements() {
     });
 
     element.addEventListener('drag', () => {
-      // scene.trigger(name, 'grabbing');
+      scene.trigger(name, 'grabbing');
     });
 
     element.addEventListener('dragend', () => {

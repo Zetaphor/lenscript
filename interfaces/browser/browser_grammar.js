@@ -39,6 +39,10 @@ export const grammar = {
       "grabbed",
       "grabbed by [target]"
     ],
+    grabbing: [
+      "grabbing",
+      "grabbing by [target]"
+    ],
     grabEnd: [
       "dropped",
       "dropped by [target]"
