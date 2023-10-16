@@ -61,6 +61,7 @@ function actionCallback(objectName, actionName, params) {
   // Filter for actions that do more than just update an objects properties
   const nonPropertyActions = ['tell', 'remember', 'save', 'become'];
   if (!nonPropertyActions.includes(actionName)) {
+    // This action only modifes a property with the provided parameters
     scene.objectProperty(objectName, actionName, params);
   } else {
     if (actionName === 'remember') scene.objectVariable(objectName, params.name, params.value);
