@@ -21,7 +21,7 @@
       </div>
       <div class="editor">
         <select id="objectSelector">
-          <option default value="disabled">Select Object</option>
+          <option default value="disabled">Select object to view scripts</option>
           <option value="testObject1">Object 1</option>
           <option value="testObject2">Object 2</option>
           <option value="testObject3">Object 3</option>
@@ -37,6 +37,143 @@
       <h1 class="title">Action Log</h1>
       <div id="actionLog"></div>
     </div>
+  </div>
+  <div class="explainer">
+    <h1 class="title">About This Demo</h1>
+    <p>This page is designed to serve as a reference implementation for the Lenscript engine.</p>
+    <p>In Lenscript an implementation of the engine into a specific platform is referred to as an interface. The
+      underlying engine is designed to be interface agnostic, supporting custom grammar to enable bespoke
+      implementations of natural language scripting into any platform.</p>
+    <p>In this demo a browser specific grammar has been loaded, and the above interface allows you to interact with that
+      grammar
+      to run triggers and actions. </p>
+    <p>The browser grammar for this page <a
+        href="https://github.com/Zetaphor/lenscript/blob/main/interfaces/browser/browser_grammar.js" target="_blank">can
+        be found here</a>. The implementation code for both this
+      UI
+      and its interaction with the Lenscript engine <a
+        href="https://github.com/Zetaphor/lenscript/blob/main/interfaces/browser/browser.js" target="_blank">can be
+        found here</a>.</p>
+    </p>
+    <p><a href="https://github.com/Zetaphor/lenscript/wiki" target="_blank">Refer to the documentation for
+        information</a>.</p>
+
+    <p>The following triggers and actions have been implemented:</p>
+
+    <h3 class="title">Triggers</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Trigger Name</th>
+          <th>Description</th>
+          <th>Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>started</td>
+          <td>Fired when the object is created</td>
+          <td>when started</td>
+        </tr>
+        <tr>
+          <td>touchStart</td>
+          <td>Fired when the mouse is pressed down on the object</td>
+          <td>when touch started</td>
+        </tr>
+        <tr>
+          <td>touchEnd</td>
+          <td>Fired when the mouse was previously held down on the object, and then is released</td>
+          <td>when touched</td>
+        </tr>
+        <tr>
+          <td>hoverStart</td>
+          <td>Fired when the mouse enters the objects bounding box</td>
+          <td>when hover started</td>
+        </tr>
+        <tr>
+          <td>hovering</td>
+          <td>Fired when the mouse is moved over the object</td>
+          <td>when hovering</td>
+        </tr>
+        <tr>
+          <td>hoverEnd</td>
+          <td>Fired when the mouse leaves the objects bounding box</td>
+          <td>when hovered</td>
+        </tr>
+        <tr>
+          <td>grabStart</td>
+          <td>Fired when a drag operation starts on the object</td>
+          <td>when grabbed</td>
+        </tr>
+        <tr>
+          <td>grabEnd</td>
+          <td>Fired when a drag operation ends on the object</td>
+          <td>when dropped</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="title">Actions</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Action Name</th>
+          <th>Description</th>
+          <th>Parameters</th>
+          <th>Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>remember</td>
+          <td>Saves a value to an objects variable store. This value can only be read by this object</td>
+          <td>name: the name of the variable, value: the value to stored (all values are cast to strings)</td>
+          <td>when touched remember counter 1, remember name Bob</td>
+        </tr>
+        <tr>
+          <td>save</td>
+          <td>Saves a value to an global scene variable store. These values can be read by all objects</td>
+          <td>name: the name of the variable, value: the value to stored (all values are cast to strings)</td>
+          <td>when touched remember counter 1, save name Bob</td>
+        </tr>
+        <tr>
+          <td>become</td>
+          <td>Transition the object to another state</td>
+          <td>name: the name of the new state</td>
+          <td>when touched then become 2, become second</td>
+        </tr>
+        <tr>
+          <td>visibility</td>
+          <td>Set the visibility for the object</td>
+          <td>value: visible or hidden</td>
+          <td>when touched then set visibility hidden</td>
+        </tr>
+        <tr>
+          <td>bgColor</td>
+          <td>Set the background color of the object</td>
+          <td>value: hex color, color name, or rgb values separated by a space</td>
+          <td>when touched then set bg color #ff0000, set bg color red, set bg color 255 0 0</td>
+        </tr>
+        <tr>
+          <td>textColor</td>
+          <td>Set the text color of the object</td>
+          <td>value: hex color, color name, or rgb values separated by a space</td>
+          <td>when touched then set text color #ff0000, set text color red, set text color 255 0 0</td>
+        </tr>
+        <tr>
+          <td>rotation</td>
+          <td>Set the rotation of the object</td>
+          <td>value: the rotation of the object, in degrees</td>
+          <td>when touched then set rotation 45</td>
+        </tr>
+        <tr>
+          <td>scale</td>
+          <td>Set the scale of the object</td>
+          <td>value: the scale of the object, as a multiplier (ex: 2 is 2x scale)</td>
+          <td>when touched then set scale 2</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <script src="./browser.js" type="module"></script>
