@@ -11,16 +11,9 @@ export const grammar = {
     started: [
       "started"
     ],
-    triggered: [
-      "triggered"
-    ],
     touchStart: [
       "touch started",
       "touch started by [target]"
-    ],
-    touching: [
-      "touching",
-      "touching by [target]"
     ],
     touchEnd: [
       "touched",
@@ -45,10 +38,6 @@ export const grammar = {
     grabStart: [
       "grabbed",
       "grabbed by [target]"
-    ],
-    grabbing: [
-      "grabbing",
-      "grabbing by [target]"
     ],
     grabEnd: [
       "dropped",
