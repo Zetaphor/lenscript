@@ -65,12 +65,9 @@ function actionCallback(objectName, actionName, params) {
   } else {
     if (actionName === 'remember') scene.objectVariable(objectName, params.name, params.value);
     else if (actionName === 'save') scene.variable(params.name, params.value);
-    else if (actionName === 'tell') {
-      scene.trigger(params.target, 'heard', params.value);
-      console.log('tell', params);
-      // TODO: Implement told trigger, not sure if that's ready yet
-      // Also implement remembered and saved triggers
-    } else if (actionName === 'become') {
+    // Still need to implement told by
+    else if (actionName === 'tell') scene.trigger(params.target, 'told');
+    else if (actionName === 'become') {
       console.log('become', params);
     }
   }
@@ -103,36 +100,37 @@ function setupTargetElements() {
 
   const scripts = [
     [
-      'When started then set bg color 0 255 0, set text color 255 255 255',
+      'When started then set bg color 0 255 0',
       'When hover started then set bg color 144 175 174, set text color 237 213 4',
-      'When hovered then set bg color 39 11 130, set text color 255 255 255',
+      'When hovered then set bg color 39 11 130',
       'When touched then save test 1',
-      'When grabbed then set bg color 58 209 136, set text color 255 255 255',
-      'When dropped then set bg color 42 127 50, set text color 255 255 255',
+      'When grabbed then set bg color 58 209 136',
+      'When dropped then set bg color 42 127 50',
+      'When told hello then set bg color 0 0 0'
     ],
     [
-      'When started then set bg color 145 240 247, set text color 255 255 255',
+      'When started then set bg color 145 240 247',
       'When hover started then set bg color 15 71 60, set text color 237 213 4',
-      'When hovered then set bg color 179 130 221, set text color 255 255 255',
+      'When hovered then set bg color 179 130 221',
       'When touched then tell testObject1 hello',
-      'When grabbed then set bg color 15 71 60, set text color 255 255 255',
-      'When dropped then set bg color 188 20 79, set text color 255 255 255',
+      'When grabbed then set bg color 15 71 60',
+      'When dropped then set bg color 188 20 79',
     ],
     [
-      'When started then set bg color 48 157 163, set text color 255 255 255',
+      'When started then set bg color 48 157 163',
       'When hover started then set bg color 68 139 244, set text color 237 213 4',
-      'When hovered then set bg color 183 244 210, set text color 255 255 255',
-      'When touched then set bg color 48 157 163, set text color 255 255 255',
-      'When grabbed then set bg color 93 96 54, set text color 255 255 255',
-      'When dropped then set bg color 191 180 30, set text color 255 255 255',
+      'When hovered then set bg color 183 244 210',
+      'When touched then set bg color 48 157 163',
+      'When grabbed then set bg color 93 96 54',
+      'When dropped then set bg color 191 180 30',
     ],
     [
-      'When started then set bg color 137 107 113, set text color 255 255 255',
+      'When started then set bg color 137 107 113',
       'When hover started then set bg color 0 204 226, set text color 237 213 4',
-      'When hovered then set bg color 2 0 2, set text color 255 255 255',
-      'When touched then set bg color 164 189 191, set text color 255 255 255',
-      'When grabbed then set bg color 57 73 71, set text color 255 255 255',
-      'When dropped then set bg color 76 75 48, set text color 255 255 255',
+      'When hovered then set bg color 2 0 2',
+      'When touched then set bg color 164 189 191',
+      'When grabbed then set bg color 57 73 71',
+      'When dropped then set bg color 76 75 48',
     ]
   ]
 
