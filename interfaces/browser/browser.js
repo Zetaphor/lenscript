@@ -58,7 +58,7 @@ function actionCallback(objectName, actionName, params) {
   const hasParams = typeof params == 'object' && Object.keys(params).length || params.length;
   const targetElement = document.querySelector(`[data-name="${objectName}"]`);
 
-  // Filter for actions that only update an objects property
+  // Filter for actions that do more than just object an objects properties
   const nonPropertyActions = ['tell', 'remember', 'save', 'become'];
   if (!nonPropertyActions.includes(actionName)) {
     scene.objectProperty(objectName, actionName, params);
